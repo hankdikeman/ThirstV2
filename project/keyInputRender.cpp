@@ -42,6 +42,9 @@ Mix_Chunk* sound;
 // sprite rect
 SDL_Rect dest = {WINDOW_WIDTH/2, WINDOW_HEIGHT/2, WINDOW_WIDTH/8, WINDOW_HEIGHT/8};
 
+// state vars
+bool music_active = true;
+
 // create blank texture
 // SDL_Texture* texture = SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, 1024, 1024 );
 
@@ -110,7 +113,7 @@ bool init_game(void) {
     }
 
     // init images
-    if (IMG_Init(IMG_INIT_JPG) != 0) {
+    if (IMG_Init(IMG_INIT_JPG) < 0) {
         printf("error initializing SDL image: %s\n", SDL_GetError());
         return false;
     }
@@ -134,11 +137,6 @@ void game_loop(void) {
     SDL_Event event;
     bool window_close_req = false;
     while (!window_close_req){
-        // swizzle colors
-        unsigned char r, g, b;
-        SDL_GetTextureColorMod(sprite, &r, &g, &b );
-        SDL_SetTextureColorMod(sprite, g, b, r );
-
         // cycle through event queue and process
         while (SDL_PollEvent(&event)){
             switch(event.type) {
@@ -184,6 +182,11 @@ void game_loop(void) {
                         case SDL_SCANCODE_D:
                         case SDL_SCANCODE_RIGHT:
                             right = false;
+                            break;
+                        case SDL_SCANCODE_P:
+                            if (music_active) Mix_PauseMusic();
+                            else Mix_ResumeMusic();
+                            music_active = !music_active;
                             break;
                     }
                     break;

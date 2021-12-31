@@ -4,7 +4,7 @@
 CC := clang
 
 # set the compiler flags
-CFLAGS := `sdl2-config --libs --cflags` -ggdb3 -O0 --std=c++98 -Wall -lSDL2main -lSDL2 -lSDL2_image -lm -I/opt/homebrew/include/SDL2/ -v
+CFLAGS := `sdl2-config --libs --cflags` -ggdb3 -O0 --std=c++98 -Wall -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lm -I/opt/homebrew/include/SDL2/
 
 # add header files here
 HDRS :=
