@@ -46,7 +46,7 @@ class Drawable {
         void set_texture(SDL_Texture* text) { texture = text; }
 
         // abstract method to provide source rectangle
-        virtual SDL_Rect get_srcrect() = 0; 
+        virtual SDL_Rect get_srcrect() = 0;
         // implemented method to provide dest rectangle
         SDL_Rect get_dstrect();
         

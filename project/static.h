@@ -20,6 +20,8 @@ class Static: public Drawable {
         // constructors
         Static(std::vector<int> pos, std::vector<int> size, SDL_Texture* text);
         Static(std::vector<float> pos, std::vector<int> size, SDL_Texture* text);
+        // implemented virtual method
+        virtual SDL_Rect get_srcrect();
 };
 
 // int constructor
@@ -31,7 +33,7 @@ Static::Static(std::vector<float> pos, std::vector<int> size, SDL_Texture* text)
     Drawable(pos, size, text) {}
 
 // provide src rectangle for renderer
-SDL_Rect Sprite::get_srcrect() {
+SDL_Rect Static::get_srcrect() {
     // update destination rectangle from position data
     dstrect.x = 0;
     dstrect.y = 0;
