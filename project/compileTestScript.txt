@@ -1,2 +1,6 @@
 # compilation test script for Drawable abstract class
 clang++ `sdl2-config --libs --cflags` -O0 -Wall -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lm Drawable.cpp -o TestDrawable.out
+# compilation test script for Statics class
+clang++ `sdl2-config --libs --cflags` -O0 -Wall -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lm Static.cpp -o TestStatic.out
+# compilation test script for Sprites class
+clang++ `sdl2-config --libs --cflags` -O0 -Wall -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lm Sprite.cpp -o TestSprite.out
