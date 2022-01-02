@@ -1,6 +1,12 @@
+/*
+ * descr: main driver file for Thirst
+ * author: Henry Dikeman
+ */
+
 // C stdlib header
 #include <stdio.h>
 #include <stdbool.h>
+#include <vector>
 
 // core SDL header
 #include <SDL.h>
@@ -23,9 +29,9 @@
 #define SPRITE_SIZE (32)
 
 // define speed and framerate
-#define Y_SPEED (240)
-#define X_SPEED (240)
-#define FRAMERATE (60)
+#define Y_SPEED (0.25f)
+#define X_SPEED (0.25f)
+#define FRAMERATE (60.0f)
 
 // declare internal funcs
 bool init_game(void);
@@ -122,6 +128,9 @@ bool init_game(void) {
 }
 
 void game_loop(void) {
+    // get start of loop time
+    Uint64 start = SDL_GetPerformanceCounter();
+
     // start in center of screen
     float x_pos = dest.x;
     float y_pos = dest.y;
@@ -183,7 +192,7 @@ void game_loop(void) {
                         case SDL_SCANCODE_RIGHT:
                             right = false;
                             break;
-                        case SDL_SCANCODE_P:
+                        case SDL_SCANCODE_M:
                             if (music_active) Mix_PauseMusic();
                             else Mix_ResumeMusic();
                             music_active = !music_active;
@@ -204,8 +213,8 @@ void game_loop(void) {
         if (x_pos >= WINDOW_WIDTH - dest.w) x_pos = WINDOW_WIDTH - dest.w;
         if (y_pos >= WINDOW_HEIGHT - dest.h) y_pos = WINDOW_HEIGHT - dest.h;
         // update sprite position
-        x_pos += x_vel / FRAMERATE;
-        y_pos += y_vel / FRAMERATE;
+        x_pos += x_vel * (1000.0f / FRAMERATE);
+        y_pos += y_vel * (1000.0f / FRAMERATE);
         // update positions in structure
         dest.x = (int) x_pos;
         dest.y = (int) y_pos;
@@ -214,8 +223,12 @@ void game_loop(void) {
         // clear window and complete new render
         SDL_RenderCopy(renderer, sprite, NULL, &dest);
         SDL_RenderPresent(renderer);
-        // delay to set frame rate
-        SDL_Delay(1000/FRAMERATE);
+
+        // calculate elapsed time
+        Uint64 end = SDL_GetPerformanceCounter();
+        float elapsedMS = (end - start) / (float) SDL_GetPerformanceFrequency() * 1000.0f;
+        // delay to cap framerate
+        SDL_Delay(floor(16.666f - elapsedMS));
     }
 }
 
@@ -234,6 +247,7 @@ void kill_game(void) {
 }
 
 int main(int argc, const char *argv[]) {
+    std::vector<int> testvect;
     // init game and load resources
     if (!init_game()) return 1;
     if (!load_resources()) return 1;
