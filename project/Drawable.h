@@ -71,8 +71,8 @@ Drawable::Drawable(std::vector<float> pos, std::vector<int> size, SDL_Texture* t
 // provide dest rectangle for renderer
 SDL_Rect Drawable::get_dstrect() {
     // update destination rectangle from position data
-    dstrect.x = x;
-    dstrect.y = y;
+    dstrect.x = (int) x;
+    dstrect.y = (int) y;
     dstrect.w = w;
     dstrect.h = h;
     // return rectangle
