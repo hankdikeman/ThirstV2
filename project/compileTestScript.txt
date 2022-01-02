@@ -1,0 +1,2 @@
+# compilation test script for Drawable abstract class
+clang++ `sdl2-config --libs --cflags` -O0 -Wall -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lm Drawable.cpp -o TestDrawable.out
