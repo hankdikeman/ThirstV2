@@ -5,6 +5,7 @@
 
 // stdlib headers
 #include <vector>
+#include <stdbool.h>
 
 // externlib headers
 #include <SDL.h>
@@ -78,5 +79,26 @@ SDL_Rect Drawable::get_dstrect() {
     // return rectangle
     return dstrect;
 }
+
+// test whether two objects are currently colliding
+bool Drawable::collision(Drawable draw) {
+    // test whether called obj is to left of `draw`
+    if (draw.get_xpos() >= x+w || draw.get_xpos()+draw.get_width() >= x) { return false; }
+    // test whether called obj is above `draw`
+    if (y >= draw.get_ypos()+draw.get_height() || y+h >= draw.get_ypos()) { return false; }
+    // default true for overlap
+    return true;
+}
+
+// test whether two objects are currently colliding
+bool Drawable::collision(Drawable draw) {
+    // test whether called obj is to left of `draw`
+    if (draw.get_xpos() >= x+w || draw.get_xpos()+draw.get_width() >= x) { return false; }
+    // test whether called obj is above `draw`
+    if (y >= draw.get_ypos()+draw.get_height() || y+h >= draw.get_ypos()) { return false; }
+    // default true for overlap
+    return true;
+}
+
 
 #endif
