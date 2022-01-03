@@ -4,7 +4,7 @@
  */
 
 // stdlib headers
-#include <vector>
+#include <array>
 
 // externlib headers
 #include <SDL.h>
@@ -21,47 +21,41 @@ class Sprite: public Drawable {
         int curr_cycle;
     public:
         // constructors
-        Sprite(std::vector<int> pos, std::vector<int> size, SDL_Texture* text);
-        Sprite(std::vector<float> pos, std::vector<int> size, SDL_Texture* text);
+        Sprite(std::array<int, 2> pos, std::array<int, 2> size, SDL_Texture* text);
+        // destructors
+        virtual ~Sprite();
         // implemented virtual method
-        virtual SDL_Rect get_srcrect();
+        virtual const SDL_Rect* get_srcrect();
 };
 
 // int constructor
-Sprite::Sprite(std::vector<int> pos, std::vector<int> size, SDL_Texture* text) : 
-    curr_cycle(0) ,
+Sprite::Sprite(std::array<int, 2> pos, std::array<int, 2> size, SDL_Texture* text) : 
     Drawable(pos, size, text)
     {
         // get dimensions of spritesheet
         int spritesheet_w, spritesheet_h;
         SDL_QueryTexture(texture, NULL, NULL, &spritesheet_w, &spritesheet_h);
         // set number of cycles with spritesheet width and width
-        num_cycles = spritesheet_w / w;
+        num_cycles = spritesheet_w / drawsize[0];
+
+        // set current cycle to 0
+        curr_cycle = 0;
     }
 
-// float constructor
-Sprite::Sprite(std::vector<float> pos, std::vector<int> size, SDL_Texture* text) : 
-    curr_cycle(0) ,
-    Drawable(pos, size, text)
-    {
-        // get dimensions of spritesheet
-        int spritesheet_w, spritesheet_h;
-        SDL_QueryTexture(texture, NULL, NULL, &spritesheet_w, &spritesheet_h);
-        // set number of cycles with spritesheet width and width
-        num_cycles = spritesheet_w / w;
-    }
+// destructor
+Sprite::~Sprite() {}
 
 // provide src rectangle for renderer
-SDL_Rect Sprite::get_srcrect() {
-    // update destination rectangle from position data
-    dstrect.x = curr_cycle*w;
-    dstrect.y = 0;
-    dstrect.w = w;
-    dstrect.h = h;
+const SDL_Rect* Sprite::get_srcrect() {
+    // update source rectangle from position data
+    srcrect.x = curr_cycle*drawsize[0];
+    srcrect.y = 0;
+    srcrect.w = drawsize[0];
+    srcrect.h = drawsize[1];
     // update cycle number
     curr_cycle = (curr_cycle+1) % num_cycles;
     // return rectangle
-    return dstrect;
+    return &srcrect;
 }
 
 #endif

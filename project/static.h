@@ -4,7 +4,7 @@
  */
 
 // stdlib headers
-#include <vector>
+#include <array>
 
 // externlib headers
 #include <SDL.h>
@@ -18,29 +18,24 @@
 class Static: public Drawable {
     public:
         // constructors
-        Static(std::vector<int> pos, std::vector<int> size, SDL_Texture* text);
-        Static(std::vector<float> pos, std::vector<int> size, SDL_Texture* text);
+        Static(std::array<int,2> pos, std::array<int,2> size, SDL_Texture* text);
         // implemented virtual method
-        virtual SDL_Rect get_srcrect();
+        virtual const SDL_Rect* get_srcrect();
 };
 
 // int constructor
-Static::Static(std::vector<int> pos, std::vector<int> size, SDL_Texture* text) : 
-    Drawable(pos, size, text) {}
-
-// float constructor
-Static::Static(std::vector<float> pos, std::vector<int> size, SDL_Texture* text) : 
+Static::Static(std::array<int,2> pos, std::array<int,2> size, SDL_Texture* text) : 
     Drawable(pos, size, text) {}
 
 // provide src rectangle for renderer
-SDL_Rect Static::get_srcrect() {
-    // update destination rectangle from position data
-    dstrect.x = 0;
-    dstrect.y = 0;
-    dstrect.w = w;
-    dstrect.h = h;
+const SDL_Rect* Static::get_srcrect() {
+    // update source rectangle from position data
+    srcrect.x = 0;
+    srcrect.y = 0;
+    srcrect.w = drawsize[0];
+    srcrect.h = drawsize[1];
     // return rectangle
-    return dstrect;
+    return &srcrect;
 }
 
 #endif
