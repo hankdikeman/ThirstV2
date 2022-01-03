@@ -19,6 +19,8 @@ class Static: public Drawable {
     public:
         // constructors
         Static(std::array<int,2> pos, std::array<int,2> size, SDL_Texture* text);
+        // destructors
+        virtual ~Static();
         // implemented virtual method
         virtual const SDL_Rect* get_srcrect();
 };
@@ -26,6 +28,9 @@ class Static: public Drawable {
 // int constructor
 Static::Static(std::array<int,2> pos, std::array<int,2> size, SDL_Texture* text) : 
     Drawable(pos, size, text) {}
+
+// destructor
+Static::~Static() {}
 
 // provide src rectangle for renderer
 const SDL_Rect* Static::get_srcrect() {
