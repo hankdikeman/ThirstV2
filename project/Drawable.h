@@ -70,7 +70,7 @@ const SDL_Rect* Drawable::get_dstrect() {
 }
 
 // test whether two objects are currently colliding
-bool Drawable::collision(const Drawable &draw) {
+bool Drawable::collision(Drawable &draw) {
     // test overlap in x direction
     int l1_x = position[0];
     int r1_x = l1_x + drawsize[0];

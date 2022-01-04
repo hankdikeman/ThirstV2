@@ -23,7 +23,7 @@ struct Tile {
         if (background_layer) delete background_layer;
     }
     Sprite* movement_layer;
-    Drawable* static_layer;
+    Static* static_layer;
     Static* background_layer;
 };
 
