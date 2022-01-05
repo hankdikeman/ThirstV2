@@ -4,3 +4,5 @@ clang++ `sdl2-config --libs --cflags` -O0 -Wall -lSDL2main -lSDL2 -lSDL2_image -
 clang++ `sdl2-config --libs --cflags` -O0 -Wall -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lm Static.cpp -o TestStatic.out
 # compilation test script for Sprites class
 clang++ `sdl2-config --libs --cflags` -O0 -Wall -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lm Sprite.cpp -o TestSprite.out
+# compilation test script for Tilemap and Tile classes
+clang++ `sdl2-config --libs --cflags` -O0 -Wall -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lm Tilemap.cpp -o TestTilemap.out

@@ -4,16 +4,19 @@
  */
 
 // stdlib headers
-#include <array>
+#include <iostream>
 #include <random>
 #include <vector>
+#include <array>
 #include <stdbool.h>
-#include <iostream>
 
 // std::cout << text << std::endl;
 
 // internal lib headers
 #include "Sprite.h"
+#include "Static.h"
+#include "Tile.h"
+#include "Tilemap.h"
 
 // SDL Headers
 #include <SDL.h>
@@ -23,11 +26,15 @@
 #include <SDL_keyboard.h>
 
 // window definitions`
-#define WINDOW_WIDTH (720)
+#define WINDOW_WIDTH (640)
 #define WINDOW_HEIGHT (640)
 
+// grid and spacing definitions
+#define GRID_SIZE (32)
+#define GRID_WIDTH (20)
+#define GRID_HEIGHT (20)
+
 // sprite definitions
-#define SPRITE_SIZE (64)
 #define NUM_SPRITES (5)
 
 // duration definitions
@@ -42,7 +49,7 @@ SDL_Texture* texture;
 int main(int argc, const char *argv[]) {
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distrib(-5, 5);
+    std::uniform_int_distribution<> distrib(-1, 1);
 
     // initialize video and timer, catch errors
     SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER);
@@ -68,18 +75,18 @@ int main(int argc, const char *argv[]) {
     SDL_QueryTexture(texture, NULL, NULL, &picwidth, &picheight);
 
     // list of sprites
-    std::vector<Sprite> spritelist;
-    std::array<int,2> drawsize = {SPRITE_SIZE, SPRITE_SIZE};
+    Tilemap* map = new Tilemap(GRID_WIDTH, GRID_HEIGHT, GRID_SIZE);
+    std::array<int,2> drawsize = {GRID_SIZE, GRID_SIZE};
     std::array<int,2> position = {0, 0};
     
     // initialize arrays
     for (int idx = 0; idx < NUM_SPRITES; idx++) {
         // add sprite to vector
-        Sprite newSprite = Sprite(position, drawsize, NUM_CYCLES, texture);
-        spritelist.push_back(newSprite);
+        Sprite* newSprite = new Sprite(position, drawsize, NUM_CYCLES, texture);
+        map->sprite(idx, idx) = newSprite;
         // change position
-        position[0] += SPRITE_SIZE;
-        position[1] += SPRITE_SIZE;
+        position[0] += GRID_SIZE;
+        position[1] += GRID_SIZE;
     }
 
     // wait for key press before rendering further
@@ -102,17 +109,21 @@ int main(int argc, const char *argv[]) {
         // clear window
         SDL_RenderClear(renderer);
         // render loop
+        for (int i = 0; i < GRID_WIDTH; i++) {
+            for (int j = 0; j < GRID_HEIGHT; j++) {
+                if (map->is_occupied(i, j)) {
+
+                    // render sprite at i, j
+                    SDL_RenderCopy(renderer, spritelist[idx].get_texture(), spritelist[idx].get_srcrect(), spritelist[idx].get_dstrect());
+                }
+            }
+        }
         for (int idx = 0; idx < NUM_SPRITES; idx++) {
-            SDL_RenderCopy(renderer, spritelist[idx].get_texture(), spritelist[idx].get_srcrect(), spritelist[idx].get_dstrect());
             if (ctr % 10 == 0) {
                 // increment sprite frame
                 spritelist[idx].increment_frame();
                 // amount to change size
                 int sizechange = distrib(gen);
-                // random width
-                spritelist[idx].set_width(spritelist[idx].get_width() + sizechange);
-                // random height
-                spritelist[idx].set_height(spritelist[idx].get_height() + sizechange);
                 // random x
                 spritelist[idx].set_xpos(spritelist[idx].get_xpos() + distrib(gen));
                 // random y
@@ -124,6 +135,9 @@ int main(int argc, const char *argv[]) {
         SDL_RenderPresent(renderer);
         SDL_Delay(20);
     }
+
+    // free heap variables
+    delete map;
 
     // destroy window and delete all SDL vars
     SDL_DestroyTexture(texture);
