@@ -34,6 +34,8 @@ class Drawable {
         // position setters
         void set_xpos(int xpos) { position[0] = xpos; }
         void set_ypos(int ypos) { position[1] = ypos; }
+        void add_xpos(int xpos) { position[0] += xpos; }
+        void add_ypos(int ypos) { position[1] += ypos; }
         void set_pos(const std::array<int, 2> &pos) { position[0] = pos[0]; position[1] = pos[1]; }
         // size setters
         void set_width(int w) { drawsize[0] = w; }
