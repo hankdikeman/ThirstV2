@@ -30,12 +30,12 @@
 #define WINDOW_HEIGHT (640)
 
 // grid and spacing definitions
-#define GRID_SIZE (48)
-#define GRID_WIDTH (20)
-#define GRID_HEIGHT (20)
+#define GRID_SIZE (24)
+#define GRID_WIDTH (27)
+#define GRID_HEIGHT (27)
 
 // sprite definitions
-#define NUM_SPRITES (5)
+#define NUM_SPRITES (15)
 
 // duration definitions
 #define NUM_FRAMES (1000)
@@ -89,8 +89,8 @@ int main(int argc, const char *argv[]) {
         std::cout << tempSprite << std::endl;
         map->sprite(idx, idx) = tempSprite;
         // change position
-        position[0] += GRID_SIZE;
-        position[1] += GRID_SIZE;
+        position[0] += 1;
+        position[1] += 1;
     }
 
     // wait for key press before rendering further
@@ -126,10 +126,10 @@ int main(int argc, const char *argv[]) {
                         // generate random motion
                         int move = distrib(gen);
                         // move sprite
-                        if (move == 0) { map->sprite_inc_y(i,j); }
-                        if (move == 1) { map->sprite_dec_y(i,j); }
-                        if (move == 2) { map->sprite_inc_x(i,j); }
-                        if (move == 3) { map->sprite_dec_x(i,j); }
+                        if (move == 0) { map->sprite_left(i,j); }
+                        if (move == 1) { map->sprite_right(i,j); }
+                        if (move == 2) { map->sprite_up(i,j); }
+                        if (move == 3) { map->sprite_down(i,j); }
                     }
                 }
             }

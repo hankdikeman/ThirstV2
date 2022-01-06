@@ -39,13 +39,15 @@ class Tilemap {
         int get_spacing() const { return grid_spacing; }
 
         // entity shift methods
-        bool sprite_dec_x(int x, int y);
-        bool sprite_inc_x(int x, int y);
-        bool sprite_dec_y(int x, int y);
-        bool sprite_inc_y(int x, int y);
+        bool sprite_left(int x, int y) { return move_sprite(x, y, x-1, y); }
+        bool sprite_right(int x, int y) { return move_sprite(x, y, x+1, y); }
+        bool sprite_up(int x, int y) { return move_sprite(x, y, x, y-1); }
+        bool sprite_down(int x, int y) { return move_sprite(x, y, x-1, y+1); }
+        bool move_sprite(int start_x, int start_y, int end_x, int end_y);
 
         // status methods
         bool is_occupied(int x, int y) const;
+        bool validate_coords(int x, int y) const;
 };
 
 // default constructor with default size and width
@@ -81,109 +83,34 @@ Tilemap::~Tilemap() {
     delete[] map;
 }
 
-// decrement x coordinate of sprite at (x,y)
-bool Tilemap::sprite_dec_x(int x, int y) {
-    // test whether target is in bounds
-    if (x != 0) {
-        // test whether requested position contains sprite
-        if (is_occupied(x, y)) {
-            // test whether target position is empty
-            if (!is_occupied(x-1, y)) {
+// generic move sprite method
+bool Tilemap::move_sprite(int start_x, int start_y, int end_x, int end_y) {
+    if (validate_coords(start_x, start_y) && validate_coords(end_x, end_y)) {
+            if (is_occupied(start_x, start_y) && !is_occupied(end_x, end_y)) {
                 // retrieve pointer
-                Sprite* moved_sprite = this->sprite(x, y);
+                Sprite* moved_sprite = this->sprite(start_x, start_y);
                 // move sprite to new position
-                this->sprite(x-1, y) = moved_sprite;
+                this->sprite(end_x, end_y) = moved_sprite;
                 // remove from old position
-                this->sprite(x, y) = 0;
+                this->sprite(start_x, start_y) = 0;
                 // adjust position
-                moved_sprite->add_xpos(-grid_spacing);
+                moved_sprite->set_xpos(end_x);
+                moved_sprite->set_ypos(end_y);
                 // return success
                 return true;
             }
-        }
     }
-    // return failure
-    return false;
-}
-
-// increment x coordinate of sprite at (x,y)
-bool Tilemap::sprite_inc_x(int x, int y) {
-    // test whether target is in bounds
-    if (x != map_width-1) {
-        // test whether requested position contains sprite
-        if (is_occupied(x, y)) {
-            // test whether target position is empty
-            if (!is_occupied(x+1, y)) {
-                // retrieve pointer
-                Sprite* moved_sprite = this->sprite(x, y);
-                // move sprite to new position
-                this->sprite(x+1, y) = moved_sprite;
-                // remove from old position
-                this->sprite(x, y) = 0;
-                // adjust position
-                moved_sprite->add_xpos(grid_spacing);
-                // return success
-                return true;
-            }
-        }
-    }
-    // return failure
-    return false;
-}
-
-// decrement y coordinate of sprite at (x,y)
-bool Tilemap::sprite_dec_y(int x, int y) {
-    // test whether target is in bounds
-    if (y != 0) {
-        // test whether requested position contains sprite
-        if (is_occupied(x, y)) {
-            // test whether target position is empty
-            if (!is_occupied(x, y-1)) {
-                // retrieve pointer
-                Sprite* moved_sprite = this->sprite(x, y);
-                // move sprite to new position
-                this->sprite(x, y-1) = moved_sprite;
-                // remove from old position
-                this->sprite(x, y) = 0;
-                // adjust position
-                moved_sprite->add_ypos(-grid_spacing);
-                // return success
-                return true;
-            }
-        }
-    }
-    // return failure
-    return false;
-}
-
-// increment y coordinate of sprite at (x,y)
-bool Tilemap::sprite_inc_y(int x, int y) {
-    // test whether target is in bounds
-    if (y != map_height-1) {
-        // test whether requested position contains sprite
-        if (is_occupied(x, y)) {
-            // test whether target position is empty
-            if (!is_occupied(x, y+1)) {
-                // retrieve pointer
-                Sprite* moved_sprite = this->sprite(x, y);
-                // move sprite to new position
-                this->sprite(x, y+1) = moved_sprite;
-                // remove from old position
-                this->sprite(x, y) = 0;
-                // adjust position
-                moved_sprite->add_ypos(grid_spacing);
-                // return success
-                return true;
-            }
-        }
-    }
-    // return failure
     return false;
 }
 
 // test whether given location is occupied
 bool Tilemap::is_occupied(int x, int y) const {
     return map[x*map_width + y].sprite_layer != 0;
+}
+
+// test whether a given pair of coordinates are valid
+bool Tilemap::validate_coords(int x, int y) const {
+    return x >= 0 && x < map_width && y >= 0 && y < map_height;
 }
 
 #endif
