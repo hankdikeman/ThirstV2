@@ -34,9 +34,9 @@ class Tilemap {
         Static*& background(int x, int y) { return map[x*map_width + y].background_layer; }
 
         // map getters
-        int get_height() { return map_height; }
-        int get_width() { return map_width; }
-        int get_spacing() { return grid_spacing; }
+        int get_height() const { return map_height; }
+        int get_width() const { return map_width; }
+        int get_spacing() const { return grid_spacing; }
 
         // entity shift methods
         bool sprite_dec_x(int x, int y);
@@ -45,7 +45,7 @@ class Tilemap {
         bool sprite_inc_y(int x, int y);
 
         // status methods
-        bool is_occupied(int x, int y);
+        bool is_occupied(int x, int y) const;
 };
 
 // default constructor with default size and width
@@ -182,7 +182,7 @@ bool Tilemap::sprite_inc_y(int x, int y) {
 }
 
 // test whether given location is occupied
-bool Tilemap::is_occupied(int x, int y) {
+bool Tilemap::is_occupied(int x, int y) const {
     return map[x*map_width + y].sprite_layer != 0;
 }
 

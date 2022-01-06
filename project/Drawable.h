@@ -26,10 +26,10 @@ class Drawable {
         Drawable(std::array<int, 2> pos, std::array<int, 2> size, SDL_Texture* text);
 
         // getters
-        int get_xpos() { return (int) position[0]; }
-        int get_ypos() { return (int) position[1]; }
-        int get_width() { return drawsize[0]; }
-        int get_height() { return drawsize[1]; }
+        int get_xpos() const { return (int) position[0]; }
+        int get_ypos() const { return (int) position[1]; }
+        int get_width() const { return drawsize[0]; }
+        int get_height() const { return drawsize[1]; }
         SDL_Texture* get_texture() { return texture; }
 
         // position setters
