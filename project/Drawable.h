@@ -26,8 +26,8 @@ class Drawable {
         Drawable(std::array<int, 2> pos, std::array<int, 2> size, SDL_Texture* text);
 
         // getters
-        int get_xpos() const { return (int) position[0]; }
-        int get_ypos() const { return (int) position[1]; }
+        int get_xpos() const { return position[0]; }
+        int get_ypos() const { return position[1]; }
         int get_width() const { return drawsize[0]; }
         int get_height() const { return drawsize[1]; }
         SDL_Texture* get_texture() { return texture; }
@@ -56,11 +56,6 @@ class Drawable {
         // source and destination rectangle methods
         virtual const SDL_Rect* get_srcrect() = 0;
         const SDL_Rect* get_dstrect();
-
-        // abstract method to provide source rectangle
-        bool collision(Drawable &draw);
-        bool collision(const std::array<int, 2> &pos, const std::array<int, 2> &size);
-        
 };
 
 // float constructor
@@ -72,52 +67,12 @@ Drawable::Drawable(std::array<int, 2> pos, std::array<int, 2> size, SDL_Texture*
 // provide dest rectangle for renderer
 const SDL_Rect* Drawable::get_dstrect() {
     // update destination rectangle from position data
-    dstrect.x = position[0];
-    dstrect.y = position[1];
+    dstrect.x = position[0]*drawsize[0];
+    dstrect.y = position[1]*drawsize[1];
     dstrect.w = drawsize[0];
     dstrect.h = drawsize[1];
     // return rectangle
     return &dstrect;
-}
-
-// test whether two objects are currently colliding
-bool Drawable::collision(Drawable &draw) {
-    // test overlap in x direction
-    int l1_x = position[0];
-    int r1_x = l1_x + drawsize[0];
-    int l2_x = draw.get_xpos();
-    int r2_x = r1_x + draw.get_width();
-    // if no overlap in x, return false
-    if (l1_x > r2_x  || l2_x > r1_x) { return false; }
-    // test overlap in y direction
-    int l1_y = position[1];
-    int r1_y = l1_y + drawsize[1];
-    int l2_y = draw.get_ypos();
-    int r2_y = r1_y + draw.get_height();
-    // if no overlap in y, return false
-    if (r1_y > l2_y  || r2_y > l1_y) { return false; }
-    // default true for overlap
-    return true;
-}
-
-// test whether two objects are currently colliding
-bool Drawable::collision(const std::array<int, 2> &pos, const std::array<int, 2> &size) {
-    // test overlap in x direction
-    int l1_x = position[0];
-    int r1_x = l1_x + drawsize[0];
-    int l2_x = pos[0];
-    int r2_x = r1_x + size[0];
-    // if no overlap in x, return false
-    if (l1_x > r2_x  || l2_x > r1_x) { return false; }
-    // test overlap in y direction
-    int l1_y = position[1];
-    int r1_y = l1_y + drawsize[1];
-    int l2_y = pos[1];
-    int r2_y = r1_y + size[1];
-    // if no overlap in y, return false
-    if (r1_y > l2_y  || r2_y > l1_y) { return false; }
-    // default true for overlap
-    return true;
 }
 
 #endif
