@@ -18,9 +18,24 @@ struct Tile {
         background_layer(0) {}
     // default destructor
     ~Tile() {
-        if (sprite_layer) delete sprite_layer;
-        if (static_layer) delete static_layer;
-        if (background_layer) delete background_layer;
+        if (sprite_layer) {
+            // show deleted pointer
+            std::cout << "free Sprite sprite: ";
+            std::cout << sprite_layer << std::endl;
+            delete sprite_layer;
+        }
+        if (static_layer) {
+            // show deleted pointer
+            std::cout << "free Static static: ";
+            std::cout << static_layer << std::endl;
+            delete static_layer;
+        }
+        if (background_layer) {
+            // show deleted pointer
+            std::cout << "free Static bg: ";
+            std::cout << background_layer << std::endl;
+            delete background_layer;
+        }
     }
     Sprite* sprite_layer;
     Static* static_layer;
