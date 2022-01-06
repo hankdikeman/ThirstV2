@@ -30,7 +30,7 @@
 #define WINDOW_HEIGHT (640)
 
 // grid and spacing definitions
-#define GRID_SIZE (32)
+#define GRID_SIZE (48)
 #define GRID_WIDTH (20)
 #define GRID_HEIGHT (20)
 
@@ -49,7 +49,7 @@ SDL_Texture* texture;
 int main(int argc, const char *argv[]) {
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distrib(-1, 1);
+    std::uniform_int_distribution<> distrib(0, 8);
 
     // initialize video and timer, catch errors
     SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER);
@@ -58,7 +58,7 @@ int main(int argc, const char *argv[]) {
     // create SDL window and catch errors
     window = SDL_CreateWindow("ThirstV2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
     // create SDL renderer
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
     SDL_SetRenderDrawColor(renderer, 0xED, 0xC9, 0xAF, 0xFF);
 
     // temporary var to load image
@@ -76,14 +76,18 @@ int main(int argc, const char *argv[]) {
 
     // list of sprites
     Tilemap* map = new Tilemap(GRID_WIDTH, GRID_HEIGHT, GRID_SIZE);
+    std::cout << "new Tilemap map: ";
+    std::cout << map << std::endl;
     std::array<int,2> drawsize = {GRID_SIZE, GRID_SIZE};
     std::array<int,2> position = {0, 0};
     
     // initialize arrays
     for (int idx = 0; idx < NUM_SPRITES; idx++) {
         // add sprite to vector
-        Sprite* newSprite = new Sprite(position, drawsize, NUM_CYCLES, texture);
-        map->sprite(idx, idx) = newSprite;
+        Sprite* tempSprite = new Sprite(position, drawsize, NUM_CYCLES, texture);
+        std::cout << "new Sprite tempSprite: ";
+        std::cout << tempSprite << std::endl;
+        map->sprite(idx, idx) = tempSprite;
         // change position
         position[0] += GRID_SIZE;
         position[1] += GRID_SIZE;
@@ -112,22 +116,22 @@ int main(int argc, const char *argv[]) {
         for (int i = 0; i < GRID_WIDTH; i++) {
             for (int j = 0; j < GRID_HEIGHT; j++) {
                 if (map->is_occupied(i, j)) {
-
                     // render sprite at i, j
-                    SDL_RenderCopy(renderer, spritelist[idx].get_texture(), spritelist[idx].get_srcrect(), spritelist[idx].get_dstrect());
+                    SDL_RenderCopy(renderer, map->sprite(i,j)->get_texture(), map->sprite(i,j)->get_srcrect(), map->sprite(i,j)->get_dstrect());
+                    if (ctr % 13 == 0) {
+                        // increment frames
+                        map->sprite(i,j)->increment_frame();
+                    }
+                    if (ctr % 25 == 0) {
+                        // generate random motion
+                        int move = distrib(gen);
+                        // move sprite
+                        if (move == 0) { map->sprite_inc_y(i,j); }
+                        if (move == 1) { map->sprite_dec_y(i,j); }
+                        if (move == 2) { map->sprite_inc_x(i,j); }
+                        if (move == 3) { map->sprite_dec_x(i,j); }
+                    }
                 }
-            }
-        }
-        for (int idx = 0; idx < NUM_SPRITES; idx++) {
-            if (ctr % 10 == 0) {
-                // increment sprite frame
-                spritelist[idx].increment_frame();
-                // amount to change size
-                int sizechange = distrib(gen);
-                // random x
-                spritelist[idx].set_xpos(spritelist[idx].get_xpos() + distrib(gen));
-                // random y
-                spritelist[idx].set_ypos(spritelist[idx].get_ypos() + distrib(gen));
             }
         }
 
@@ -136,6 +140,9 @@ int main(int argc, const char *argv[]) {
         SDL_Delay(20);
     }
 
+    // show deleted pointer
+    std::cout << "free Tilemap map: ";
+    std::cout << map << std::endl;
     // free heap variables
     delete map;
 
