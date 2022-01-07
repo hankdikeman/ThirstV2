@@ -3,6 +3,9 @@
  * author: Henry Dikeman
  */
 
+// standardlib headers
+#include <iostream>
+
 // internlib headers
 #include "Static.h"
 #include "Sprite.h"
@@ -37,6 +40,8 @@ struct Tile {
             delete background_layer;
         }
     }
+
+    // pointer variables
     Sprite* sprite_layer;
     Static* static_layer;
     Static* background_layer;

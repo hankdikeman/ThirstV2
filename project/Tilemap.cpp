@@ -38,7 +38,7 @@
 #define NUM_SPRITES (15)
 
 // duration definitions
-#define NUM_FRAMES (1000)
+#define NUM_FRAMES (250)
 #define NUM_CYCLES (2)
 
 // pointers to windows, textures, music
@@ -113,11 +113,13 @@ int main(int argc, const char *argv[]) {
         // clear window
         SDL_RenderClear(renderer);
         // render loop
-        for (int i = 0; i < GRID_WIDTH; i++) {
-            for (int j = 0; j < GRID_HEIGHT; j++) {
+        int i = 0; int j = 0;
+        for (i = 0; i < GRID_WIDTH; i++) {
+            for (j = 0; j < GRID_HEIGHT; j++) {
                 if (map->is_occupied(i, j)) {
                     // render sprite at i, j
-                    SDL_RenderCopy(renderer, map->sprite(i,j)->get_texture(), map->sprite(i,j)->get_srcrect(), map->sprite(i,j)->get_dstrect());
+                    map->draw(renderer, i, j);
+
                     if (ctr % 13 == 0) {
                         // increment frames
                         map->sprite(i,j)->increment_frame();
