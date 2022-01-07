@@ -7,6 +7,9 @@
 #include <stdbool.h>
 #include <iostream>
 
+// externlib headers
+#include <SDL.h>
+
 // internlib headers
 #include "Static.h"
 #include "Sprite.h"
@@ -45,8 +48,12 @@ class Tilemap {
         bool sprite_down(int x, int y) { return move_sprite(x, y, x-1, y+1); }
         bool move_sprite(int start_x, int start_y, int end_x, int end_y);
 
+        // draw method
+        void draw(SDL_Renderer* renderer, int x, int y);
+
         // status methods
         bool is_occupied(int x, int y) const;
+        bool is_occupied(Drawable* drawable) const;
         bool validate_coords(int x, int y) const;
 };
 
@@ -103,9 +110,25 @@ bool Tilemap::move_sprite(int start_x, int start_y, int end_x, int end_y) {
     return false;
 }
 
+// draw Tilemap contents to window
+void Tilemap::draw(SDL_Renderer* renderer, int x, int y) {
+    // check validity of coordinates
+    if (validate_coords(x,y)) {
+        // draw sprite if initialized
+        if (is_occupied(sprite(x,y))) {
+            SDL_RenderCopy(renderer, sprite(x,y)->get_texture(), sprite(x,y)->get_srcrect(), sprite(x,y)->get_dstrect());
+        }
+    }
+}
+
 // test whether given location is occupied
 bool Tilemap::is_occupied(int x, int y) const {
     return map[x*map_width + y].sprite_layer != 0;
+}
+
+// occupied test using passed Drawable
+bool Tilemap::is_occupied(Drawable* drawable) const {
+    return drawable != 0;
 }
 
 // test whether a given pair of coordinates are valid
