@@ -5,6 +5,7 @@
 
 // stdlib headers
 #include <iostream>
+#include <memory>
 #include <random>
 #include <vector>
 #include <array>
@@ -74,19 +75,21 @@ int main(int argc, const char *argv[]) {
     int picwidth, picheight;
     SDL_QueryTexture(texture, NULL, NULL, &picwidth, &picheight);
 
-    // list of sprites
+    // make tilemap object
     Tilemap* map = new Tilemap(GRID_WIDTH, GRID_HEIGHT, GRID_SIZE);
     std::cout << "new Tilemap map: ";
     std::cout << map << std::endl;
+    // make drawsize and position arrays
     std::array<int,2> drawsize = {GRID_SIZE, GRID_SIZE};
     std::array<int,2> position = {0, 0};
     
     // initialize arrays
     for (int idx = 0; idx < NUM_SPRITES; idx++) {
-        // add sprite to vector
-        Sprite* tempSprite = new Sprite(position, drawsize, NUM_CYCLES, texture);
+        // make new shared ptr and log
+        std::shared_ptr<Sprite> tempSprite = std::make_shared<Sprite>(position, drawsize, NUM_CYCLES, texture);
         std::cout << "new Sprite tempSprite: ";
         std::cout << tempSprite << std::endl;
+        // add to tilemap
         map->sprite(idx, idx) = tempSprite;
         // change position
         position[0] += 1;

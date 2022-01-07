@@ -6,6 +6,7 @@
 // stdlib headers
 #include <stdbool.h>
 #include <iostream>
+#include <memory>
 
 // externlib headers
 #include <SDL.h>
@@ -32,9 +33,9 @@ class Tilemap {
 
         // tile getters
         Tile& operator()(int x, int y) { return map[x*map_width + y]; }
-        Sprite*& sprite(int x, int y) { return map[x*map_width + y].sprite_layer; }
-        Static*& statics(int x, int y) { return map[x*map_width + y].static_layer; }
-        Static*& background(int x, int y) { return map[x*map_width + y].background_layer; }
+        std::shared_ptr<Sprite>& sprite(int x, int y) { return map[x*map_width + y].sprite_layer; }
+        std::shared_ptr<Static>& statics(int x, int y) { return map[x*map_width + y].static_layer; }
+        std::shared_ptr<Static>& background(int x, int y) { return map[x*map_width + y].background_layer; }
 
         // map getters
         int get_height() const { return map_height; }
@@ -52,8 +53,8 @@ class Tilemap {
         void draw(SDL_Renderer* renderer, int x, int y);
 
         // status methods
-        bool is_occupied(int x, int y) const;
-        bool is_occupied(Drawable* drawable) const;
+        bool is_occupied(int x, int y);
+        bool is_occupied(const std::shared_ptr<Sprite>& spr);
         bool validate_coords(int x, int y) const;
 };
 
@@ -94,15 +95,11 @@ Tilemap::~Tilemap() {
 bool Tilemap::move_sprite(int start_x, int start_y, int end_x, int end_y) {
     if (validate_coords(start_x, start_y) && validate_coords(end_x, end_y)) {
             if (is_occupied(start_x, start_y) && !is_occupied(end_x, end_y)) {
-                // retrieve pointer
-                Sprite* moved_sprite = this->sprite(start_x, start_y);
-                // move sprite to new position
-                this->sprite(end_x, end_y) = moved_sprite;
-                // remove from old position
-                this->sprite(start_x, start_y) = 0;
                 // adjust position
-                moved_sprite->set_xpos(end_x);
-                moved_sprite->set_ypos(end_y);
+                this->sprite(start_x, start_y)->set_xpos(end_x);
+                this->sprite(start_x, start_y)->set_ypos(end_y);
+                // move in map
+                sprite(end_x, end_y) = std::move(sprite(start_x, start_y));
                 // return success
                 return true;
             }
@@ -122,13 +119,13 @@ void Tilemap::draw(SDL_Renderer* renderer, int x, int y) {
 }
 
 // test whether given location is occupied
-bool Tilemap::is_occupied(int x, int y) const {
-    return map[x*map_width + y].sprite_layer != 0;
+bool Tilemap::is_occupied(int x, int y) {
+    return this->sprite(x,y) != nullptr;
 }
 
 // occupied test using passed Drawable
-bool Tilemap::is_occupied(Drawable* drawable) const {
-    return drawable != 0;
+bool Tilemap::is_occupied(const std::shared_ptr<Sprite>& spr) {
+    return spr != nullptr;
 }
 
 // test whether a given pair of coordinates are valid

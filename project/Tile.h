@@ -5,6 +5,7 @@
 
 // standardlib headers
 #include <iostream>
+#include <memory>
 
 // internlib headers
 #include "Static.h"
@@ -20,31 +21,12 @@ struct Tile {
         static_layer(0), 
         background_layer(0) {}
     // default destructor
-    ~Tile() {
-        if (sprite_layer) {
-            // show deleted pointer
-            std::cout << "free Sprite sprite: ";
-            std::cout << sprite_layer << std::endl;
-            delete sprite_layer;
-        }
-        if (static_layer) {
-            // show deleted pointer
-            std::cout << "free Static static: ";
-            std::cout << static_layer << std::endl;
-            delete static_layer;
-        }
-        if (background_layer) {
-            // show deleted pointer
-            std::cout << "free Static bg: ";
-            std::cout << background_layer << std::endl;
-            delete background_layer;
-        }
-    }
+    ~Tile() {}
 
-    // pointer variables
-    Sprite* sprite_layer;
-    Static* static_layer;
-    Static* background_layer;
+    // pointer variables (static and bg layers should be made unique if not used in lists later)
+    std::shared_ptr<Sprite> sprite_layer;
+    std::shared_ptr<Static> static_layer;
+    std::shared_ptr<Static> background_layer;
 };
 
 #endif
