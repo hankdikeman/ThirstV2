@@ -46,7 +46,7 @@ class Tilemap {
         bool sprite_left(int x, int y) { return move_sprite(x, y, x-1, y); }
         bool sprite_right(int x, int y) { return move_sprite(x, y, x+1, y); }
         bool sprite_up(int x, int y) { return move_sprite(x, y, x, y-1); }
-        bool sprite_down(int x, int y) { return move_sprite(x, y, x-1, y+1); }
+        bool sprite_down(int x, int y) { return move_sprite(x, y, x, y+1); }
         bool move_sprite(int start_x, int start_y, int end_x, int end_y);
 
         // draw method
@@ -96,8 +96,8 @@ bool Tilemap::move_sprite(int start_x, int start_y, int end_x, int end_y) {
     if (validate_coords(start_x, start_y) && validate_coords(end_x, end_y)) {
             if (is_occupied(start_x, start_y) && !is_occupied(end_x, end_y)) {
                 // adjust position
-                this->sprite(start_x, start_y)->set_xpos(end_x);
-                this->sprite(start_x, start_y)->set_ypos(end_y);
+                this->sprite(start_x, start_y)->set_x(end_x);
+                this->sprite(start_x, start_y)->set_y(end_y);
                 // move in map
                 sprite(end_x, end_y) = std::move(sprite(start_x, start_y));
                 // return success
