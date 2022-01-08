@@ -16,24 +16,19 @@
 #define STATIC_H
 
 class Static: public Drawable {
-    protected:
-        std::array<int, 2> srcsize;
     public:
+        // include superclass setter for overloading
+        using Drawable::set_texture;
+
         // constructors
-        Static(std::array<int, 2> pos, std::array<int, 2> dsize, std::array<int, 2> ssize, SDL_Texture* text);
+        Static() {}
+
         // destructors
-        virtual ~Static();
+        virtual ~Static() {}
+
         // implemented virtual method
         virtual const SDL_Rect* get_srcrect();
 };
-
-// source size constructor
-Static::Static(std::array<int, 2> pos, std::array<int, 2> dsize, std::array<int, 2> ssize, SDL_Texture* text) :
-    Drawable(pos, dsize, text),
-    srcsize(ssize) {}
-
-// destructor
-Static::~Static() {}
 
 // provide src rectangle for renderer
 const SDL_Rect* Static::get_srcrect() {

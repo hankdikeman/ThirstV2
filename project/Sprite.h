@@ -17,55 +17,58 @@
 
 class Sprite: public Drawable {
     protected:
-        std::array<int, 2> srcsize;
         int num_cycles;
         int curr_frame;
     public:
+        // include superclass setter for overloading
+        using Drawable::set_texture;
+
         // constructors
-        Sprite(std::array<int, 2> pos, std::array<int, 2> dsize, std::array<int, 2> ssize, SDL_Texture* text);
-        Sprite(std::array<int, 2> pos, std::array<int, 2> dsize, int n_cyc, SDL_Texture* text);
+        Sprite() {}
+
         // destructors
-        virtual ~Sprite();
+        virtual ~Sprite() {}
+
+        // overloaded texture setters
+        void set_texture(SDL_Texture* text, int num_cycles);
+        void set_texture(SDL_Texture* text, std::array<int, 2> ssize);
+
         // implemented virtual method
         virtual const SDL_Rect* get_srcrect();
+
         // animation cycle iteration
         void increment_frame();
 };
 
-// source size constructor
-Sprite::Sprite(std::array<int, 2> pos, std::array<int, 2> dsize, std::array<int, 2> ssize, SDL_Texture* text) :
-    Drawable(pos, dsize, text),
-    srcsize(ssize) {
-        // get dimensions of spritesheet
-        int spritesheet_w, spritesheet_h;
-        SDL_QueryTexture(texture, NULL, NULL, &spritesheet_w, &spritesheet_h);
-        // set number of cycles with spritesheet width and width
-        num_cycles = spritesheet_w / srcsize[0];
-        // set current cycle to 0
-        curr_frame = 0;
+// source size texture setter
+void Sprite::set_texture(SDL_Texture* text, std::array<int, 2> srcsize) {
+    // set texture and source size array
+    this->set_texture(text);
+    this->set_srcsize(srcsize);
+    // get dimensions of spritesheet
+    int spritesheet_w, spritesheet_h;
+    SDL_QueryTexture(texture, NULL, NULL, &spritesheet_w, &spritesheet_h);
+    // set number of cycles with spritesheet width and width
+    this->num_cycles = spritesheet_w / srcsize[0];
 }
 
-// cycle specified constructor
-Sprite::Sprite(std::array<int, 2> pos, std::array<int, 2> dsize, int n_cyc, SDL_Texture* text) :
-    Drawable(pos, dsize, text),
-    num_cycles(n_cyc) {
-        // get dimensions of spritesheet
-        int spritesheet_w, spritesheet_h;
-        SDL_QueryTexture(texture, NULL, NULL, &spritesheet_w, &spritesheet_h);
-        // set number of cycles with spritesheet width and width
-        srcsize[0] = spritesheet_w / num_cycles;
-        srcsize[1] = spritesheet_h;
-        // set current cycle to 0
-        curr_frame = 0;
+// cycle specified texture setter
+void Sprite::set_texture(SDL_Texture* text, int num_cycles) {
+    // set texture and number of cycles
+    this->set_texture(text);
+    this->num_cycles = num_cycles;
+    // get dimensions of spritesheet
+    int spritesheet_w, spritesheet_h;
+    SDL_QueryTexture(texture, NULL, NULL, &spritesheet_w, &spritesheet_h);
+    // set number of cycles with spritesheet width and width
+    std::array<int, 2> ssize = {spritesheet_w / num_cycles, spritesheet_h};
+    this->set_srcsize(ssize);
 }
-
-// destructor
-Sprite::~Sprite() {}
 
 // provide src rectangle for renderer
 const SDL_Rect* Sprite::get_srcrect() {
     // update source rectangle from position data
-    srcrect.x = curr_frame*srcsize[0];
+    srcrect.x = curr_frame * srcsize[0];
     srcrect.y = 0;
     srcrect.w = srcsize[0];
     srcrect.h = srcsize[1];
