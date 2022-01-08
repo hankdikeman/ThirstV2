@@ -34,7 +34,7 @@ class Drawable {
         int get_w() const { return drawsize[0]; }
         int get_h() const { return drawsize[1]; }
         SDL_Texture* get_texture() { return texture; }
-        std::bitset<8>& const get_id() { return id; }
+        std::bitset<8>& get_id() { return id; }
 
         // position setters
         void set_x(int xpos) { position[0] = xpos; }
