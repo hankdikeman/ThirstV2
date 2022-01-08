@@ -18,6 +18,7 @@
 #include "Static.h"
 #include "Tile.h"
 #include "Tilemap.h"
+#include "EntityList.h"
 
 // SDL Headers
 #include <SDL.h>
@@ -31,12 +32,12 @@
 #define WINDOW_HEIGHT (640)
 
 // grid and spacing definitions
-#define GRID_SIZE (24)
+#define GRID_SIZE (64)
 #define GRID_WIDTH (27)
 #define GRID_HEIGHT (27)
 
 // sprite definitions
-#define NUM_SPRITES (15)
+#define NUM_SPRITES (1)
 
 // duration definitions
 #define NUM_FRAMES (250)
@@ -79,22 +80,35 @@ int main(int argc, const char *argv[]) {
     Tilemap* map = new Tilemap(GRID_WIDTH, GRID_HEIGHT, GRID_SIZE);
     std::cout << "new Tilemap map: ";
     std::cout << map << std::endl;
+    // make entity list object
+    EntityList* elist = new EntityList();
+    std::cout << "new EntityList elist: ";
+    std::cout << elist << std::endl;
+
     // make drawsize and position arrays
     std::array<int,2> drawsize = {GRID_SIZE, GRID_SIZE};
     std::array<int,2> position = {0, 0};
     
     // initialize arrays
     for (int idx = 0; idx < NUM_SPRITES; idx++) {
-        // make new shared ptr and log
-        std::shared_ptr<Sprite> tempSprite = std::make_shared<Sprite>(position, drawsize, NUM_CYCLES, texture);
-        std::cout << "new Sprite tempSprite: ";
-        std::cout << tempSprite << std::endl;
-        // add to tilemap
+        // make new sprite shared_ptr
+        std::shared_ptr<Sprite> tempSprite = std::make_shared<Sprite>();
+
+        // add texture data and drawsize data
+        tempSprite->set_texture(texture, NUM_CYCLES);
+        tempSprite->set_drawsize(drawsize);
+        // add position data
+        tempSprite->set_position(position);
+
+        // add to tilemap and entity list
         map->sprite(idx, idx) = tempSprite;
+        elist->add_enemy(tempSprite);
+
         // change position
         position[0] += 1;
         position[1] += 1;
     }
+
 
     // wait for key press before rendering further
     SDL_Event event;
@@ -111,9 +125,63 @@ int main(int argc, const char *argv[]) {
         }
     }
 
+    // control vars
+    bool up = false;
+    bool down = false;
+    bool left = false;
+    bool right = false;
+    bool window_close_req = false;
+    int ctr = 0;
+
     // game loop
-    for (int ctr = 0; ctr < NUM_FRAMES; ctr++) {
-        // clear window
+    while (!window_close_req) {
+        // increment cycle counter
+        ctr++;
+        // cycle through event queue and process
+        while (SDL_PollEvent(&event)){
+            switch(event.type) {
+                // quit game
+                case SDL_QUIT:
+                    window_close_req = true;
+                    break;
+                // trigger if a key was pressed
+                case SDL_KEYDOWN:
+                    switch(event.key.keysym.scancode) {
+                        case SDL_SCANCODE_W:
+                        case SDL_SCANCODE_UP:
+                            up = true;
+                            break;
+                        case SDL_SCANCODE_A:
+                        case SDL_SCANCODE_LEFT:
+                            left = true;
+                            break;
+                        case SDL_SCANCODE_S:
+                        case SDL_SCANCODE_DOWN:
+                            down = true;
+                            break;
+                        case SDL_SCANCODE_D:
+                        case SDL_SCANCODE_RIGHT:
+                            right = true;
+                            break;
+                    }
+                    // move loop for move command
+                    for (std::shared_ptr<Sprite>& spr : elist->get_enemy_list()) {
+                        // get position data
+                        int spr_x = spr->get_x(); int spr_y = spr->get_y();
+                        // process movement
+                        if (left) { map->sprite_left(spr_x,spr_y); }
+                        if (right) { map->sprite_right(spr_x,spr_y); }
+                        if (up) { map->sprite_up(spr_x,spr_y); }
+                        if (down) { map->sprite_down(spr_x,spr_y); }
+                    }
+                    // reset control vars
+                    up = false;
+                    down = false;
+                    left = false;
+                    right = false;
+                    break;
+            }
+        }
         SDL_RenderClear(renderer);
         // render loop
         int i = 0; int j = 0;
@@ -122,34 +190,27 @@ int main(int argc, const char *argv[]) {
                 if (map->is_occupied(i, j)) {
                     // render sprite at i, j
                     map->draw(renderer, i, j);
-
                     if (ctr % 13 == 0) {
                         // increment frames
                         map->sprite(i,j)->increment_frame();
                     }
-                    if (ctr % 25 == 0) {
-                        // generate random motion
-                        int move = distrib(gen);
-                        // move sprite
-                        if (move == 0) { map->sprite_left(i,j); }
-                        if (move == 1) { map->sprite_right(i,j); }
-                        if (move == 2) { map->sprite_up(i,j); }
-                        if (move == 3) { map->sprite_down(i,j); }
-                    }
                 }
             }
         }
-
-        // render all to window
         SDL_RenderPresent(renderer);
+        // render all to window
         SDL_Delay(20);
     }
 
+    // make entity list object
+    std::cout << "free EntityList elist: ";
+    std::cout << elist << std::endl;
     // show deleted pointer
     std::cout << "free Tilemap map: ";
     std::cout << map << std::endl;
     // free heap variables
     delete map;
+    delete elist;
 
     // destroy window and delete all SDL vars
     SDL_DestroyTexture(texture);
