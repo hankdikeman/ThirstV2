@@ -15,10 +15,14 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
+// define direction type
+enum Direction { right, left, up, down };
+
 class Sprite: public Drawable {
     protected:
         int num_cycles;
         int curr_frame;
+        direction dir; 
     public:
         // include superclass setter for overloading
         using Drawable::set_texture;
@@ -32,6 +36,10 @@ class Sprite: public Drawable {
         // overloaded texture setters
         void set_texture(SDL_Texture* text, int num_cycles);
         void set_texture(SDL_Texture* text, std::array<int, 2> ssize);
+
+        // direction getter and setter
+        Direction get_direction() { return dir; }
+        void set_direction(Direction dir) { this->dir = dir; }
 
         // implemented virtual method
         virtual const SDL_Rect* get_srcrect();
