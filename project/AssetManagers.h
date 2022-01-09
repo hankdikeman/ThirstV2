@@ -20,11 +20,37 @@
 #define ASSETMANAGERS_H
 
 class TextureManager {
+    private:
+        // hashmap for textures
+    public:
+        // constructor
+        TextureManager() {}
 
+        // texture loader
+        void init_textures();
+
+        // index texture from id
+        SDL_Texture* query_texture(std::bitset<8> id);
+
+        // clean up loaded textures
+        void clean_up();
 };
 
 class SoundManager {
+    private:
+        // hashmap for textures
+    public:
+        // constructor
+        SoundManager() {}
 
+        // sound loader
+        void init_sounds();
+
+        // index sound from id
+        Mix_Chunk* query_sound(std::bitset<8> id);
+
+        // clean up loaded textures
+        void clean_up();
 };
 
 #endif
