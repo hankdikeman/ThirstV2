@@ -54,14 +54,21 @@ void populate_data(void);
 // replace with manager classes
 SDL_Window* window;
 SDL_Renderer* renderer;
+
+// take these out once Asset Managers are sorted out
 SDL_Texture* sprite;
 Mix_Music* music;
+
+// add these in once complete
+// SoundManager* soundMngr;
+// TextureManager* textureMngr;
 
 // blank texture renderer
 // SDL_Texture* texture = SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, 1024, 1024 );
 
 bool load_resources(void) {
-    // textureMngr = TextureManager();
+    // textureMngr = new TextureManager();
+    // textureMngr->init_textures();
 
     // *** MOVE TO TEXTURE INIT FUNCTION ** //
     // temporary var to load image
@@ -85,7 +92,9 @@ bool load_resources(void) {
 
     // *** *** //
 
-    // soundMngr = SoundManager();
+    // initialize and load
+    // soundMngr = new SoundManager();
+    // soundMngr->init_sounds();
 
     // *** MOVE TO MUSIC LOAD *** //
     // load music and play
