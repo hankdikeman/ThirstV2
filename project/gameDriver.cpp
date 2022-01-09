@@ -33,8 +33,8 @@
 #include "EntityList.h"
 
 // window definitions`
-#define WINDOW_WIDTH (640)
-#define WINDOW_HEIGHT (640)
+#define WINDOW_WIDTH (768)
+#define WINDOW_HEIGHT (768)
 
 // grid and spacing definitions
 #define GRID_SIZE (64)
@@ -48,6 +48,7 @@
 bool init_game(void);
 void kill_game(void);
 bool load_resources(void);
+void populate_data(void);
 
 // take out eventually (except for renderer and window)
 // replace with manager classes
@@ -60,7 +61,7 @@ Mix_Music* music;
 // SDL_Texture* texture = SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, 1024, 1024 );
 
 bool load_resources(void) {
-    // textMngr = TextureManager();
+    // textureMngr = TextureManager();
 
     // *** MOVE TO TEXTURE INIT FUNCTION ** //
     // temporary var to load image
@@ -114,7 +115,7 @@ bool init_game(void) {
     // create SDL window
     window = SDL_CreateWindow("ThirstV2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
     // initialize renderer and set default color
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
     SDL_SetRenderDrawColor(renderer, 0xED, 0xC9, 0xAF, 0xFF);
 
     return true;
@@ -126,6 +127,15 @@ void game_loop(void) {
         // get start of loop time
         Uint64 start = SDL_GetPerformanceCounter();
 
+        // check controller inputs
+        // int gameState = InputHandler(EntityList, Tilemap);
+
+        // game engine call (req: EntityList, Tilemap)
+        // EngineStep(EntityList, Tilemap);
+
+        // render call (req: renderer, EntityList, Tilemap)
+        // ExecuteRender(renderer, EntityList, Tilemap);
+
         // calculate elapsed time
         Uint64 end = SDL_GetPerformanceCounter();
         float elapsedMS = (end - start) / (float) SDL_GetPerformanceFrequency() * 1000.0f;
@@ -136,12 +146,16 @@ void game_loop(void) {
 
 void kill_game(void) {
     // destroy window and delete all SDL vars
-    SDL_DestroyTexture(sprite);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
 
+    // clean up texture data (replace with textureMngr->clean_up();)
+    SDL_DestroyTexture(sprite);
+
+    // clean up audio data (replace with soundMngr->clean_up();)
     Mix_FreeMusic(music);
 
+    // quit SDL, SDL_image, SDL_mixer
     IMG_Quit();
     Mix_Quit();
     SDL_Quit();
@@ -151,6 +165,8 @@ int main(int argc, const char *argv[]) {
     // init game and load resources
     if (!init_game()) return 1;
     if (!load_resources()) return 1;
+    // populate game map
+    populate_data();
     // run game loop until quit
     game_loop();
     // free resources and end
