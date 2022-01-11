@@ -20,7 +20,7 @@ class Drawable {
         std::array<int, 2> srcsize;
         std::array<int, 2> position;
         std::array<int, 2> drawsize;
-        std::bitset<8> id;
+        uint8_t id;
         SDL_Texture * texture;
         SDL_Rect dstrect;
         SDL_Rect srcrect;
@@ -34,7 +34,7 @@ class Drawable {
         int get_w() const { return drawsize[0]; }
         int get_h() const { return drawsize[1]; }
         SDL_Texture* get_texture() { return texture; }
-        std::bitset<8>& get_id() { return id; }
+        uint8_t get_id() { return id; }
 
         // position setters
         void set_x(int xpos) { position[0] = xpos; }
@@ -51,7 +51,7 @@ class Drawable {
         // texture setter
         void set_texture(SDL_Texture* text) { texture = text; }
         // id setter
-        void set_id(std::bitset<8>& id) { this->id = id; }
+        void set_id(uint8_t id) { this->id = id; }
 
         // source and destination rectangle methods
         virtual const SDL_Rect* get_srcrect() = 0;

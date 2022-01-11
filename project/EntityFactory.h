@@ -36,7 +36,7 @@ class EntityFactory {
         // default enemy generation method
         std::shared_ptr<Enemy>& generate_enemy();
         // id passed enemy generation method
-        std::shared_ptr<Enemy>& generate_enemy(std::bitset<8> id);
+        std::shared_ptr<Enemy>& generate_enemy(uint8_t id);
 
 };
 
@@ -77,7 +77,7 @@ std::shared_ptr<Enemy>& generate_enemy() {
 }
 
 // id passed enemy generation method
-std::shared_ptr<Enemy>& generate_enemy(std::bitset<8> id){
+std::shared_ptr<Enemy>& generate_enemy(uint8_t id){
     // generate new player
     std::shared_ptr<Enemy> newEnemy = std::make_shared<Enemy>();
 
