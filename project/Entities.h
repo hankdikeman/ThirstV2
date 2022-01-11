@@ -33,7 +33,7 @@ class Enemy : public Sprite {
         
         // state setter and getter
         EnemyState get_direction() { return state; }
-        void set_direction(EnemyState dir) { this->state = state; }
+        void set_direction(EnemyState state) { this->state = state; }
 
         // health setter and getter
         int get_health() { return health; }
