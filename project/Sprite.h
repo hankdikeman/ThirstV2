@@ -22,7 +22,7 @@ class Sprite: public Drawable {
     protected:
         int num_cycles;
         int curr_frame;
-        direction dir; 
+        Direction dir; 
     public:
         // include superclass setter for overloading
         using Drawable::set_texture;
