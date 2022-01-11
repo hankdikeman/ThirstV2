@@ -14,16 +14,18 @@
 // std::cout << text << std::endl;
 
 // internal lib headers
-#include "Sprite.h"
 #include "Static.h"
 #include "Tile.h"
 #include "Tilemap.h"
 #include "EntityList.h"
+#include "Entities.h"
+#include "AssetManagers.h"
 
 // SDL Headers
 #include <SDL.h>
 #include <SDL_timer.h>
 #include <SDL_image.h>
+#include <SDL_mixer.h>
 #include <SDL_events.h>
 #include <SDL_keyboard.h>
 
@@ -37,7 +39,7 @@
 #define GRID_HEIGHT (27)
 
 // sprite definitions
-#define NUM_SPRITES (1)
+#define NUM_SPRITES (5)
 
 // duration definitions
 #define NUM_FRAMES (250)
@@ -84,6 +86,11 @@ int main(int argc, const char *argv[]) {
     EntityList* elist = new EntityList();
     std::cout << "new EntityList elist: ";
     std::cout << elist << std::endl;
+    // make texture manager
+    TextureManager* textureMngr = new TextureManager();
+    textureMngr->init_textures(renderer);
+    std::cout << "new TextureManager textureMngr: ";
+    std::cout << textureMngr << std::endl;
 
     // make drawsize and position arrays
     std::array<int,2> drawsize = {GRID_SIZE, GRID_SIZE};
@@ -94,8 +101,11 @@ int main(int argc, const char *argv[]) {
         // make new sprite shared_ptr
         std::shared_ptr<Sprite> tempSprite = std::make_shared<Sprite>();
 
+        // set ID to player
+        tempSprite->set_id(0b00000001);
+
         // add texture data and drawsize data
-        tempSprite->set_texture(texture, NUM_CYCLES);
+        tempSprite->set_texture(textureMngr->query_texture(tempSprite->get_id()), NUM_CYCLES);
         tempSprite->set_drawsize(drawsize);
         // add position data
         tempSprite->set_position(position);
@@ -211,6 +221,12 @@ int main(int argc, const char *argv[]) {
     // free heap variables
     delete map;
     delete elist;
+
+    // show deleted resource handler
+    std::cout << "free TextureManager textureMngr: ";
+    std::cout << textureMngr << std::endl;
+    // delete textureMngr (with internal cleanup)
+    delete textureMngr;
 
     // destroy window and delete all SDL vars
     SDL_DestroyTexture(texture);
