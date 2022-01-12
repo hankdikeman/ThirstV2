@@ -14,6 +14,11 @@
 #include <SDL.h>
 
 // internlib headers
+#include "Sprite.h"
+#include "Static.h"
+#include "Tilemap.h"
+#include "EntityList.h"
+#include "EntityFactory.h"
 
 #ifndef GAMEENGINE_H
 #define GAMEENGINE_H
@@ -22,6 +27,9 @@ enum GameState { running, paused, quit };
 
 class Engine {
     private:
+        std::unique_ptr<Tilemap> map;
+        std::unique_ptr<EntityList> entList;
+        std::unique_ptr<EntityFactory> entFact;
 
     public:
         void populate_map() {}
