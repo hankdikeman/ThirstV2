@@ -14,7 +14,8 @@
 #include <SDL.h>
 
 // internlib headers
-#include "Entities.h"
+#include "Sprite.h"
+#include "Static.h"
 #include "AssetManagers.h"
 
 #ifndef ENTITYFACTORY_H
@@ -22,73 +23,64 @@
 
 class EntityFactory {
     private:
-        TextureManager* textureMngr;
-        SoundManager* soundMngr;
+        std::shared_ptr<TextureManager> textureMngr;
+        std::shared_ptr<SoundManager> soundMngr;
     public:
         // constructor
-        EntityFactory(TextureManager* textureMngr, SoundManager* soundMngr);
+        EntityFactory(std::shared_ptr<TextureManager>& textureMngr, std::shared_ptr<SoundManager>& soundMngr);
 
         // destructor
         ~EntityFactory() {}
 
-        // player generation method
-        std::shared_ptr<Player>& generate_player();
-        // default enemy generation method
-        std::shared_ptr<Enemy>& generate_enemy();
-        // id passed enemy generation method
-        std::shared_ptr<Enemy>& generate_enemy(uint8_t id);
+        // default sprite generation method
+        std::shared_ptr<Sprite> generate_sprite(int x, int y);
+        // id passed sprite generation function
+        std::shared_ptr<Sprite> generate_sprite(int x, int y, uint8_t id);
 
 };
 
-EntityFactory::EntityFactory(TextureManager* textureMngr, SoundManager* soundMngr) {
+EntityFactory::EntityFactory(std::shared_ptr<TextureManager>& textureMngr, std::shared_ptr<SoundManager>& soundMngr) {
     // save texture and sound managers
     this->textureMngr = textureMngr;
-    this->soundMngr = textureMngr;
+    this->soundMngr = soundMngr;
 }
 
-// player generation method
-std::shared_ptr<Player>& generate_player() {
-    // generate new player
-    std::shared_ptr<Player> newPlayer = std::make_shared<Player>();
+// generate sprite of random id
+std::shared_ptr<Sprite> EntityFactory::generate_sprite(int x, int y) {
+    // call internal method with some randomized ID
+    std::shared_ptr<Sprite> newSprite = generate_sprite(x, y, 0x01);
 
+    // return generated sprite
+    return newSprite;
+}
+
+// id passed generation method
+std::shared_ptr<Sprite> EntityFactory::generate_sprite(int x, int y, uint8_t id){
+    // generate new player
+    std::shared_ptr<Sprite> newSprite = std::make_shared<Sprite>();
+
+    // *** EVENTUALLY READ IN ATTRIBUTES FROM EXTERNAL FILE *** //
+    // set ID
+    newSprite->set_id(0x01);
     // set health
+    newSprite->health() = 100;
+    newSprite->mhealth() = 100;
     // set x and y
-    // query for texture and set
+    newSprite->set_x(x);
+    newSprite->set_y(y);
+    // query for texture and set 
+    newSprite->set_texture(
+            textureMngr->query_texture(newSprite->get_id()),
+            2 // NUM_CYCLES, change based on external file or standardize
+            );
     // query for sound and set
+    // NO SOUNDS FOR NOW
     // set drawsize
+    newSprite->set_draw_w(textureMngr->get_grid_size());
+    newSprite->set_draw_h(textureMngr->get_grid_size());
 
     // return Player
-    return newPlayer;
-}
-
-// default enemy generation method
-std::shared_ptr<Enemy>& generate_enemy() {
-    // generate new player
-    std::shared_ptr<Enemy> newEnemy = std::make_shared<Enemy>();
-
-    // set health
-    // set x and y
-    // default query for texture and set
-    // default query for sound and set
-    // set drawsize
-
-    // return Player
-    return newEnemy;
-}
-
-// id passed enemy generation method
-std::shared_ptr<Enemy>& generate_enemy(uint8_t id){
-    // generate new player
-    std::shared_ptr<Enemy> newEnemy = std::make_shared<Enemy>();
-
-    // set health
-    // set x and y
-    // query for texture and set
-    // query for sound and set
-    // set drawsize
-
-    // return Player
-    return newEnemy;
+    return newSprite;
 }
 
 #endif
