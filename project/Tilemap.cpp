@@ -120,7 +120,7 @@ int main(int argc, const char *argv[]) {
         std::shared_ptr<Sprite> delEnemy = map->sprite(idx,idx);
 
         // delete from tilemap and elist
-        map->sprite(delEnemy->get_x(), delEnemy->get_y()) = nullptr;
+        map->sprite(delEnemy->x(), delEnemy->y()) = nullptr;
         elist->delete_enemy(delEnemy);
     }
 
@@ -182,7 +182,7 @@ int main(int argc, const char *argv[]) {
                     // move loop for move command
                     for (std::shared_ptr<Sprite>& spr : elist->get_enemy_list()) {
                         // get position data
-                        int spr_x = spr->get_x(); int spr_y = spr->get_y();
+                        int spr_x = spr->x(); int spr_y = spr->y();
                         // process movement
                         if (left) { map->sprite_left(spr_x,spr_y); }
                         if (right) { map->sprite_right(spr_x,spr_y); }

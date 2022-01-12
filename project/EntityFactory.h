@@ -66,23 +66,23 @@ std::shared_ptr<Sprite> EntityFactory::generate_sprite(int x, int y, uint8_t id)
 
     // *** EVENTUALLY READ IN ATTRIBUTES FROM EXTERNAL FILE *** //
     // set ID
-    newSprite->set_id(id);
+    newSprite->id() = id;
     // set health
     newSprite->health() = 100;
     newSprite->max_health() = 100;
     // set x and y
-    newSprite->set_x(x);
-    newSprite->set_y(y);
+    newSprite->x() = x;
+    newSprite->y() = y;
     // query for texture and set 
     newSprite->set_texture(
-            textureMngr->query_texture(newSprite->get_id()),
+            textureMngr->query_texture(newSprite->id()),
             2 // NUM_CYCLES, change based on external file or standardize
             );
     // query for sound and set
     // NO SOUNDS FOR NOW
     // set drawsize
-    newSprite->set_draw_w(textureMngr->get_grid_size());
-    newSprite->set_draw_h(textureMngr->get_grid_size());
+    newSprite->w() = textureMngr->get_grid_size();
+    newSprite->h() = textureMngr->get_grid_size();
 
     // return Player
     return newSprite;
@@ -103,17 +103,17 @@ std::shared_ptr<Static> EntityFactory::generate_static(int x, int y, uint8_t id)
 
     // *** EVENTUALLY READ IN ATTRIBUTES FROM EXTERNAL FILE *** //
     // set ID
-    newStatic->set_id(id);
+    newStatic->id() = id;
     // set x and y
-    newStatic->set_x(x);
-    newStatic->set_y(y);
+    newStatic->x() = x;
+    newStatic->y() = y;
     // query for texture and set 
-    newStatic->set_texture( textureMngr->query_texture(newStatic->get_id()) );
+    newStatic->set_texture( textureMngr->query_texture(newStatic->id()) );
     // query for sound and set
     // NO SOUNDS FOR NOW
     // set drawsize
-    newStatic->set_draw_w(textureMngr->get_grid_size());
-    newStatic->set_draw_h(textureMngr->get_grid_size());
+    newStatic->w() = (textureMngr->get_grid_size());
+    newStatic->h() = textureMngr->get_grid_size();
 
     // return Player
     return newStatic;

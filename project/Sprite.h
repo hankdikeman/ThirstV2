@@ -39,7 +39,7 @@ class Sprite: public Drawable {
         int sprite_health;
         int sprite_max_health;
         // state info
-        Direction sprite_direction; 
+        SpriteDirection sprite_direction; 
         SpriteState sprite_state;
     public:
         // constructors
@@ -80,7 +80,7 @@ void Sprite::set_texture(SDL_Texture* text, std::array<int, 2> srcsize) {
     int spritesheet_w, spritesheet_h;
     SDL_QueryTexture(texture, NULL, NULL, &spritesheet_w, &spritesheet_h);
     // set number of cycles with spritesheet width and width
-    this->num_cycles = spritesheet_w / srcsize[0];
+    this->num_cycles = spritesheet_w / this->src_w();
 }
 
 // cycle specified texture setter
@@ -99,10 +99,10 @@ void Sprite::set_texture(SDL_Texture* text, int num_cycles) {
 // provide src rectangle for renderer
 const SDL_Rect* Sprite::get_srcrect() {
     // update source rectangle from position data
-    srcrect.x = curr_frame * srcsize[0];
+    srcrect.x = curr_frame * this->src_w();
     srcrect.y = 0;
-    srcrect.w = srcsize[0];
-    srcrect.h = srcsize[1];
+    srcrect.w = this->src_w();
+    srcrect.h = this->src_h();
     // return rectangle
     return &srcrect;
 }

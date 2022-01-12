@@ -35,8 +35,8 @@ const SDL_Rect* Static::get_srcrect() {
     // update source rectangle from position data
     srcrect.x = 0;
     srcrect.y = 0;
-    srcrect.w = srcsize[0];
-    srcrect.h = srcsize[1];
+    srcrect.w = this->src_w();
+    srcrect.h = this->src_h();
     // return rectangle
     return &srcrect;
 }

@@ -23,7 +23,11 @@
 #ifndef GAMEENGINE_H
 #define GAMEENGINE_H
 
-enum GameState { running, paused, quit };
+enum class GameState { 
+    QUIT = -1,
+    RUNNING = 0,
+    PAUSED = 1
+};
 
 class Engine {
     private:
@@ -32,10 +36,26 @@ class Engine {
         std::unique_ptr<EntityFactory> entFact;
 
     public:
-        void populate_map() {}
-        GameState input() { return 0; }
-        void step() {}
-        void render(SDL_Renderer* renderer) {}
+        void populate_map();
+        GameState input();
+        void step();
+        void render(SDL_Renderer* renderer);
 };
+
+void Engine::populate_map() {
+
+}
+
+GameState Engine::input() {
+    return GameState::RUNNING;
+}
+
+void Engine::step() {
+
+}
+
+void render(SDL_Renderer* renderer) {
+
+}
 
 #endif
