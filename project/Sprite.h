@@ -18,11 +18,19 @@
 // define direction type
 enum Direction { right, left, up, down };
 
+// define sprite states
+enum SpriteState { player, idling, attacking, fleeing };
+
 class Sprite: public Drawable {
-    protected:
+    private:
+        // animation info
         int num_cycles;
         int curr_frame;
+        int health;
+        int mhealth;
+        // state info
         Direction dir; 
+        SpriteState state;
     public:
         // include superclass setter for overloading
         using Drawable::set_texture;
@@ -40,6 +48,14 @@ class Sprite: public Drawable {
         // direction getter and setter
         Direction get_direction() { return dir; }
         void set_direction(Direction dir) { this->dir = dir; }
+        // state setter and getter
+        SpriteState get_state() { return state; }
+        void set_state(SpriteState state) { this->state = state; }
+
+        // health reference getters
+        int& mhealth() { return mhealth; }
+        int& health() { return health; }
+
 
         // implemented virtual method
         virtual const SDL_Rect* get_srcrect();
