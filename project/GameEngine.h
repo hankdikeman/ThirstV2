@@ -35,7 +35,7 @@ class Engine {
         void populate_map() {}
         GameState input() { return 0; }
         void step() {}
-        void render() {}
+        void render(SDL_Renderer* renderer) {}
 };
 
 #endif

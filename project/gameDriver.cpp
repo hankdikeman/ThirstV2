@@ -132,7 +132,7 @@ void game_loop(void) {
         // engine->step();
 
         // render call (req: renderer, EntityList, Tilemap)
-        // engine->render();
+        // engine->render(renderer);
 
         // calculate elapsed time
         Uint64 end = SDL_GetPerformanceCounter();
