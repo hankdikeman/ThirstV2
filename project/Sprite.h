@@ -26,8 +26,8 @@ class Sprite: public Drawable {
         // animation info
         int num_cycles;
         int curr_frame;
-        int health;
-        int mhealth;
+        int sprite_health;
+        int sprite_max_health;
         // state info
         Direction dir; 
         SpriteState state;
@@ -53,8 +53,8 @@ class Sprite: public Drawable {
         void set_state(SpriteState state) { this->state = state; }
 
         // health reference getters
-        int& mhealth() { return mhealth; }
-        int& health() { return health; }
+        int& max_health() { return sprite_max_health; }
+        int& health() { return sprite_health; }
 
 
         // implemented virtual method
