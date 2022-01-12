@@ -24,11 +24,12 @@
 
 class TextureManager {
     private:
+        SDL_Renderer* renderer;
         std::unordered_map<uint8_t, SDL_Texture*> texture_map;
         int grid_size;
     public:
         // constructor
-        TextureManager(int grid_size) : grid_size(grid_size) {}
+        TextureManager(SDL_Renderer* renderer, int grid_size) : renderer(renderer), grid_size(grid_size) {}
 
         // destructor
         ~TextureManager();
@@ -38,13 +39,13 @@ class TextureManager {
         void set_grid_size(int grid_size) { this->grid_size = grid_size; }
 
         // texture loader
-        void init_textures(SDL_Renderer*& renderer);
+        void init_textures();
 
         // index texture from id
         SDL_Texture*& query_texture(uint8_t id) { return texture_map[id]; }
 };
 
-void TextureManager::init_textures(SDL_Renderer*& renderer) {
+void TextureManager::init_textures() {
     // *** EVENTUALLY READ IN XML FILE FOR TEXTURE TRACKING *** //
     
     // initialize ID
