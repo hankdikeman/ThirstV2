@@ -1,5 +1,5 @@
 /*
- * descr: entity factory class
+ * descr: class definition for EntityFactory class. Generates Sprite and Static objects
  * author: Henry Dikeman
  */
 
@@ -37,6 +37,11 @@ class EntityFactory {
         // id passed sprite generation function
         std::shared_ptr<Sprite> generate_sprite(int x, int y, uint8_t id);
 
+        // default Static generation method
+        std::shared_ptr<Static> generate_static(int x, int y);
+        // id passed Static generation function
+        std::shared_ptr<Static> generate_static(int x, int y, uint8_t id);
+
 };
 
 EntityFactory::EntityFactory(std::shared_ptr<TextureManager>& textureMngr, std::shared_ptr<SoundManager>& soundMngr) {
@@ -61,7 +66,7 @@ std::shared_ptr<Sprite> EntityFactory::generate_sprite(int x, int y, uint8_t id)
 
     // *** EVENTUALLY READ IN ATTRIBUTES FROM EXTERNAL FILE *** //
     // set ID
-    newSprite->set_id(0x01);
+    newSprite->set_id(id);
     // set health
     newSprite->health() = 100;
     newSprite->max_health() = 100;
@@ -81,6 +86,37 @@ std::shared_ptr<Sprite> EntityFactory::generate_sprite(int x, int y, uint8_t id)
 
     // return Player
     return newSprite;
+}
+
+// generate sprite of random id
+std::shared_ptr<Static> EntityFactory::generate_static(int x, int y) {
+    // call internal method with some randomized ID
+    std::shared_ptr<Static> newStatic = generate_static(x, y, 0x01);
+    // return generated static object
+    return newStatic;
+}
+
+// id passed generation method
+std::shared_ptr<Static> EntityFactory::generate_static(int x, int y, uint8_t id) {
+    // generate new player
+    std::shared_ptr<Static> newStatic = std::make_shared<Static>();
+
+    // *** EVENTUALLY READ IN ATTRIBUTES FROM EXTERNAL FILE *** //
+    // set ID
+    newStatic->set_id(id);
+    // set x and y
+    newStatic->set_x(x);
+    newStatic->set_y(y);
+    // query for texture and set 
+    newStatic->set_texture( textureMngr->query_texture(newStatic->get_id()) );
+    // query for sound and set
+    // NO SOUNDS FOR NOW
+    // set drawsize
+    newStatic->set_draw_w(textureMngr->get_grid_size());
+    newStatic->set_draw_h(textureMngr->get_grid_size());
+
+    // return Player
+    return newStatic;
 }
 
 #endif
