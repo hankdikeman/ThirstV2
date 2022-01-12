@@ -42,7 +42,6 @@ class Enemy : public Sprite {
             this->health += increment; 
             this->health %= mhealth;
         }
-        
         // max health setter and getter
         int get_mhealth() { return mhealth; }
         void set_mhealth(int mhealth) { this->mhealth = mhealth; }

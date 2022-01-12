@@ -64,7 +64,7 @@ std::shared_ptr<Sprite> EntityFactory::generate_sprite(int x, int y, uint8_t id)
     newSprite->set_id(0x01);
     // set health
     newSprite->health() = 100;
-    newSprite->mhealth() = 100;
+    newSprite->max_health() = 100;
     // set x and y
     newSprite->set_x(x);
     newSprite->set_y(y);

@@ -117,11 +117,11 @@ int main(int argc, const char *argv[]) {
     // test deleting sprites
     for (int idx = 0; idx < 3; idx++) {
         // get sprite from entity list
-        std::shared_ptr<Sprite> delEnemy = elist->get_enemy(idx);
+        std::shared_ptr<Sprite> delEnemy = map->sprite(idx,idx);
 
         // delete from tilemap and elist
-        map->sprite(delSprite->get_x(), delSprite->get_y()) = nullptr;
-        elist->delete_enemy(delSprite);
+        map->sprite(delEnemy->get_x(), delEnemy->get_y()) = nullptr;
+        elist->delete_enemy(delEnemy);
     }
 
 

@@ -36,10 +36,10 @@
 #define WINDOW_WIDTH (768)
 #define WINDOW_HEIGHT (768)
 
-// grid and spacing definitions
+// map info
 #define GRID_SIZE (64)
-#define GRID_WIDTH (16)
-#define GRID_HEIGHT (16)
+#define MAP_WIDTH (16)
+#define MAP_HEIGHT (16)
 
 // define framerate
 #define FRAMERATE (60.0f)
@@ -50,63 +50,34 @@ void kill_game(void);
 bool load_resources(void);
 void populate_data(void);
 
-// take out eventually (except for renderer and window)
-// replace with manager classes
+// window and renderer objects
 SDL_Window* window;
 SDL_Renderer* renderer;
 
-// take these out once Asset Managers are sorted out
-SDL_Texture* sprite;
-Mix_Music* music;
-
-// add these in once complete
-// SoundManager* soundMngr;
-// TextureManager* textureMngr;
+// resource manager objects
+std::shared_ptr<SoundManager> soundMngr;
+std::shared_ptr<TextureManager> textureMngr;
 
 // blank texture renderer
 // SDL_Texture* texture = SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, 1024, 1024 );
 
 bool load_resources(void) {
-    // textureMngr = new TextureManager();
-    // textureMngr->init_textures();
+    // make tilemap object
+    std::unique_ptr<Tilemap> map = std::make_unique<Tilemap>(MAP_WIDTH, MAP_HEIGHT, GRID_SIZE);
 
-    // *** MOVE TO TEXTURE INIT FUNCTION ** //
-    // temporary var to load image
-    SDL_Surface *temp;
-    // load image to temp var
-    temp = IMG_Load("Resources/PCSprite.png");
-    // check for error
-    if (!temp) {
-        printf("error loading image\n");
-        return false;
-    }
-    // format surfaces
-    sprite = SDL_CreateTextureFromSurface(renderer, temp);
-    // free temp
-    SDL_FreeSurface(temp);
-    // check for error
-    if (!sprite) {
-        printf("error converting image\n");
-        return false;
-    }
+    // make entity list object
+    std::unique_ptr<EntityList> elist = std::make_unique<EntityList>();
 
-    // *** *** //
-
-    // initialize and load
-    // soundMngr = new SoundManager();
+    // make and init texture manager
+    std::shared_ptr<TextureManager> textureMngr = std::make_shared<TextureManager>(GRID_SIZE);
+    textureMngr->init_textures(renderer);
+    
+    // make and init sound manager (not ready yet)
+    std::shared_ptr<SoundManager> soundMngr = std::make_shared<SoundManager>();
     // soundMngr->init_sounds();
 
-    // *** MOVE TO MUSIC LOAD *** //
-    // load music and play
-    music = Mix_LoadMUS("Resources/jazzy.wav");
-    // check for error
-    if (!music) {
-        printf("error loading music\n");
-        return false;
-    }
-    // begin soundtrack
-    // Mix_PlayMusic(music, -1);
-    // *** *** //
+    // initialize EntityFactory (nullptr for sound mngr for now)
+    std::unique_ptr<EntityFactory> eFact = std::make_unique<EntityFactory>(textureMngr, soundMngr);
 
     return true;
 }
@@ -123,6 +94,7 @@ bool init_game(void) {
 
     // create SDL window
     window = SDL_CreateWindow("ThirstV2", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
+
     // initialize renderer and set default color
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
     SDL_SetRenderDrawColor(renderer, 0xED, 0xC9, 0xAF, 0xFF);
@@ -136,14 +108,16 @@ void game_loop(void) {
         // get start of loop time
         Uint64 start = SDL_GetPerformanceCounter();
 
-        // check controller inputs
-        // int gameState = InputHandler(EntityList, Tilemap);
+        // check controller inputs (change user vars like Player)
+        // int gameState = engine->input(EntityList, Tilemap);
 
-        // game engine call (req: EntityList, Tilemap)
-        // EngineStep(EntityList, Tilemap);
+        // check game state (paused, quit, etc)
+
+        // game engine call (change AI vars like enemies)
+        // engine->step(EntityList, Tilemap);
 
         // render call (req: renderer, EntityList, Tilemap)
-        // ExecuteRender(renderer, EntityList, Tilemap);
+        // engine->render(renderer, EntityList, Tilemap);
 
         // calculate elapsed time
         Uint64 end = SDL_GetPerformanceCounter();
@@ -151,6 +125,12 @@ void game_loop(void) {
         // delay to cap framerate
         SDL_Delay(std::max(floor(16.666f - elapsedMS),0));
     }
+}
+
+void populate_data(void) {
+
+    // engine->populate_map()
+
 }
 
 void kill_game(void) {
