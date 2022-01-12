@@ -1,5 +1,5 @@
 /*
- * descr: header file for Drawable abstract class
+ * descr: abstract baseclass definition for drawable objects
  * author: Henry Dikeman
  */
 

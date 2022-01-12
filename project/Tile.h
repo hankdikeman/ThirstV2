@@ -1,5 +1,5 @@
 /*
- * descr: header file for Tile struct container
+ * descr: class definition for Tile struct, containing data for a given map tile
  * author: Henry Dikeman
  */
 

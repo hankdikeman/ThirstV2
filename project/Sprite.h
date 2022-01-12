@@ -1,5 +1,5 @@
 /*
- * descr: header file for Sprite entity class. Animations which have repeated cycles
+ * descr: Sprite class definition for animated entity objects. Inherits Drawable
  * author: Henry Dikeman
  */
 

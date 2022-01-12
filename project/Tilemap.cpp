@@ -1,5 +1,5 @@
 /*
- * descr: compilation test file for abstract class `Sprite`
+ * descr: playground for testing more base functionality of Container and entity classes
  * author: Henry Dikeman
  */
 
@@ -90,8 +90,8 @@ int main(int argc, const char *argv[]) {
     std::cout << elist << std::endl;
 
     // make texture manager
-    std::shared_ptr<TextureManager> textureMngr = std::make_shared<TextureManager>(GRID_SIZE);
-    textureMngr->init_textures(renderer);
+    std::shared_ptr<TextureManager> textureMngr = std::make_shared<TextureManager>(renderer, GRID_SIZE);
+    textureMngr->init_textures();
     std::cout << "new TextureManager textureMngr: ";
     std::cout << textureMngr << std::endl;
     

@@ -1,5 +1,5 @@
 /*
- * descr: header file for Sprite entity class. Animations which have repeated cycles
+ * descr: class definition for EntityList container class
  * author: Henry Dikeman
  */
 

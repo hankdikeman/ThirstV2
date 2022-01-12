@@ -1,5 +1,5 @@
 /*
- * descr: header file for Static entity class. Animations which do not have cycles
+ * descr: Static class definition for non-animated entity objects. Inherits Drawable
  * author: Henry Dikeman
  */
 

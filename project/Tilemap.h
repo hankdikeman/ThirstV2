@@ -1,5 +1,5 @@
 /*
- * descr: header file for Tilemap container class
+ * descr: class definition for Tilemap game structure container
  * author: Henry Dikeman
  */
 

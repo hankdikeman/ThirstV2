@@ -1,5 +1,5 @@
 /*
- * descr: game engine class Engine
+ * descr: game engine Engine class definition
  * author: Henry Dikeman
  */
 
