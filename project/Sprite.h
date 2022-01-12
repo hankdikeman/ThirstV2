@@ -15,11 +15,21 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
-// define direction type
-enum Direction { right, left, up, down };
+// define direction enum
+enum class SpriteDirection { 
+    RIGHT, 
+    LEFT, 
+    UP, 
+    DOWN 
+};
 
 // define sprite states
-enum SpriteState { player, idling, attacking, fleeing };
+enum class SpriteState { 
+    PLAYER, 
+    IDLING, 
+    ATTACKING, 
+    FLEEING
+};
 
 class Sprite: public Drawable {
     private:
@@ -29,28 +39,25 @@ class Sprite: public Drawable {
         int sprite_health;
         int sprite_max_health;
         // state info
-        Direction dir; 
-        SpriteState state;
+        Direction sprite_direction; 
+        SpriteState sprite_state;
     public:
-        // include superclass setter for overloading
-        using Drawable::set_texture;
-
         // constructors
         Sprite() {}
 
         // destructors
         virtual ~Sprite() {}
 
+        // include superclass setter for overloading
+        using Drawable::set_texture;
         // overloaded texture setters
         void set_texture(SDL_Texture* text, int num_cycles);
         void set_texture(SDL_Texture* text, std::array<int, 2> ssize);
 
-        // direction getter and setter
-        Direction get_direction() { return dir; }
-        void set_direction(Direction dir) { this->dir = dir; }
+        // direction reference getter
+        SpriteDirection& direction() { return sprite_direction; }
         // state setter and getter
-        SpriteState get_state() { return state; }
-        void set_state(SpriteState state) { this->state = state; }
+        SpriteState& state() { return sprite_state; }
 
         // health reference getters
         int& max_health() { return sprite_max_health; }
