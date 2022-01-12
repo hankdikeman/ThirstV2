@@ -16,7 +16,8 @@
 #include <SDL_mixer.h>
 
 // internlib headers
-#include "Entities.h"
+#include "Sprite.h"
+#include "Static.h"
 
 #ifndef ASSETMANAGERS_H
 #define ASSETMANAGERS_H
