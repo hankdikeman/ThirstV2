@@ -15,10 +15,11 @@
 
 // internal lib headers
 #include "Static.h"
+#include "Sprite.h"
 #include "Tile.h"
 #include "Tilemap.h"
 #include "EntityList.h"
-#include "Entities.h"
+#include "EntityFactory.h"
 #include "AssetManagers.h"
 
 // SDL Headers
@@ -79,44 +80,48 @@ int main(int argc, const char *argv[]) {
     SDL_QueryTexture(texture, NULL, NULL, &picwidth, &picheight);
 
     // make tilemap object
-    Tilemap* map = new Tilemap(GRID_WIDTH, GRID_HEIGHT, GRID_SIZE);
+    std::unique_ptr<Tilemap> map = std::make_unique<Tilemap>(GRID_WIDTH, GRID_HEIGHT, GRID_SIZE);
     std::cout << "new Tilemap map: ";
     std::cout << map << std::endl;
+
     // make entity list object
-    EntityList* elist = new EntityList();
+    std::unique_ptr<EntityList> elist = std::make_unique<EntityList>();
     std::cout << "new EntityList elist: ";
     std::cout << elist << std::endl;
+
     // make texture manager
-    TextureManager* textureMngr = new TextureManager();
+    std::shared_ptr<TextureManager> textureMngr = std::make_shared<TextureManager>(GRID_SIZE);
     textureMngr->init_textures(renderer);
     std::cout << "new TextureManager textureMngr: ";
     std::cout << textureMngr << std::endl;
-
-    // make drawsize and position arrays
-    std::array<int,2> drawsize = {GRID_SIZE, GRID_SIZE};
-    std::array<int,2> position = {0, 0};
     
+    // make texture manager
+    std::shared_ptr<SoundManager> soundMngr = std::make_shared<SoundManager>();
+    std::cout << "new SoundManager soundMngr: ";
+    std::cout << soundMngr << std::endl;
+
+    // initialize EntityFactory (nullptr for sound mngr for now)
+    std::unique_ptr<EntityFactory> eFact = std::make_unique<EntityFactory>(textureMngr, soundMngr);
+    std::cout << "new EntityFactory eFact: ";
+    std::cout << eFact << std::endl;
+
     // initialize arrays
     for (int idx = 0; idx < NUM_SPRITES; idx++) {
-        // make new sprite shared_ptr
-        std::shared_ptr<Sprite> tempSprite = std::make_shared<Sprite>();
-
-        // set ID to player
-        tempSprite->set_id(0b00000001);
-
-        // add texture data and drawsize data
-        tempSprite->set_texture(textureMngr->query_texture(tempSprite->get_id()), NUM_CYCLES);
-        tempSprite->set_drawsize(drawsize);
-        // add position data
-        tempSprite->set_position(position);
-
+        // make new player shared ptr
+        std::shared_ptr<Sprite> tempSprite = eFact->generate_sprite(idx, idx, 0x01);
         // add to tilemap and entity list
         map->sprite(idx, idx) = tempSprite;
         elist->add_enemy(tempSprite);
+    }
 
-        // change position
-        position[0] += 1;
-        position[1] += 1;
+    // test deleting sprites
+    for (int idx = 0; idx < 3; idx++) {
+        // get sprite from entity list
+        std::shared_ptr<Sprite> delEnemy = elist->get_enemy(idx);
+
+        // delete from tilemap and elist
+        map->sprite(delSprite->get_x(), delSprite->get_y()) = nullptr;
+        elist->delete_enemy(delSprite);
     }
 
 
@@ -211,22 +216,6 @@ int main(int argc, const char *argv[]) {
         // render all to window
         SDL_Delay(20);
     }
-
-    // make entity list object
-    std::cout << "free EntityList elist: ";
-    std::cout << elist << std::endl;
-    // show deleted pointer
-    std::cout << "free Tilemap map: ";
-    std::cout << map << std::endl;
-    // free heap variables
-    delete map;
-    delete elist;
-
-    // show deleted resource handler
-    std::cout << "free TextureManager textureMngr: ";
-    std::cout << textureMngr << std::endl;
-    // delete textureMngr (with internal cleanup)
-    delete textureMngr;
 
     // destroy window and delete all SDL vars
     SDL_DestroyTexture(texture);
