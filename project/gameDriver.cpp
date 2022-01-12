@@ -28,9 +28,10 @@
 // internal lib headers
 #include "Sprite.h"
 #include "Static.h"
-#include "Tile.h"
 #include "Tilemap.h"
 #include "EntityList.h"
+#include "EntityFactory.h"
+#include "GameEngine.h"
 
 // window definitions`
 #define WINDOW_WIDTH (768)
@@ -54,34 +55,48 @@ void populate_data(void);
 SDL_Window* window;
 SDL_Renderer* renderer;
 
+// *** CHANGE SO THAT ONLY GLOBAL IS ENGINE *** //
+// game containers
+std::unique_ptr<EntityList> entList;
+std::unique_ptr<Tilemap> map;
+// generator objects
+std::unique_ptr<EntityFactory> entFact;
 // resource manager objects
 std::shared_ptr<SoundManager> soundMngr;
 std::shared_ptr<TextureManager> textureMngr;
 
+// engine pointer
+std::unique_ptr<Engine> engine;
+
 // blank texture renderer
 // SDL_Texture* texture = SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, 1024, 1024 );
 
+// *** NEEDS PROPER ERROR CHECKING EVENTUALLY ** //
 bool load_resources(void) {
     // make tilemap object
-    std::unique_ptr<Tilemap> map = std::make_unique<Tilemap>(MAP_WIDTH, MAP_HEIGHT, GRID_SIZE);
+    map = std::make_unique<Tilemap>(MAP_WIDTH, MAP_HEIGHT, GRID_SIZE);
 
     // make entity list object
-    std::unique_ptr<EntityList> elist = std::make_unique<EntityList>();
+    entList = std::make_unique<EntityList>();
 
     // make and init texture manager
-    std::shared_ptr<TextureManager> textureMngr = std::make_shared<TextureManager>(GRID_SIZE);
-    textureMngr->init_textures(renderer);
+    textureMngr = std::make_shared<TextureManager>(renderer, GRID_SIZE);
+    textureMngr->init_textures();
     
     // make and init sound manager (not ready yet)
-    std::shared_ptr<SoundManager> soundMngr = std::make_shared<SoundManager>();
+    soundMngr = std::make_shared<SoundManager>();
     // soundMngr->init_sounds();
 
     // initialize EntityFactory (nullptr for sound mngr for now)
-    std::unique_ptr<EntityFactory> eFact = std::make_unique<EntityFactory>(textureMngr, soundMngr);
+    entFact = std::make_unique<EntityFactory>(textureMngr, soundMngr);
+
+    // initialize engine object
+    engine = std::make_unique<Engine>(map, entList, entFact)
 
     return true;
 }
 
+// *** NEEDS PROPER ERROR CHECKING EVENTUALLY *** //
 bool init_game(void) {
     // initialize SDL and SDL_timer
     SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER)
@@ -108,16 +123,16 @@ void game_loop(void) {
         // get start of loop time
         Uint64 start = SDL_GetPerformanceCounter();
 
-        // check controller inputs (change user vars like Player)
-        // int gameState = engine->input(EntityList, Tilemap);
+        // check controller inputs (change user vars like Player) and store to Enum type
+        // GameState gameState = engine->input(EntityList, Tilemap);
 
-        // check game state (paused, quit, etc)
+        // check game state (paused, quit, etc), wait for action if not 0
 
         // game engine call (change AI vars like enemies)
-        // engine->step(EntityList, Tilemap);
+        // engine->step();
 
         // render call (req: renderer, EntityList, Tilemap)
-        // engine->render(renderer, EntityList, Tilemap);
+        // engine->render();
 
         // calculate elapsed time
         Uint64 end = SDL_GetPerformanceCounter();
@@ -134,15 +149,9 @@ void populate_data(void) {
 }
 
 void kill_game(void) {
-    // destroy window and delete all SDL vars
+    // global SDL vars deleted manually
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
-
-    // clean up texture data (replace with textureMngr->clean_up();)
-    SDL_DestroyTexture(sprite);
-
-    // clean up audio data (replace with soundMngr->clean_up();)
-    Mix_FreeMusic(music);
 
     // quit SDL, SDL_image, SDL_mixer
     IMG_Quit();
