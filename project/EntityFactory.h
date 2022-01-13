@@ -70,6 +70,10 @@ std::shared_ptr<Sprite> EntityFactory::generate_sprite(int x, int y, uint8_t id)
     // set health
     newSprite->health() = 100;
     newSprite->max_health() = 100;
+    // set direction to default RIGHT
+    newSprite->direction() = SpriteDirection::RIGHT;
+    // set state to default IDLING
+    newSprite->state() = SpriteState::IDLING;
     // set x and y
     newSprite->x() = x;
     newSprite->y() = y;
@@ -91,7 +95,7 @@ std::shared_ptr<Sprite> EntityFactory::generate_sprite(int x, int y, uint8_t id)
 // generate sprite of random id
 std::shared_ptr<Static> EntityFactory::generate_static(int x, int y) {
     // call internal method with some randomized ID
-    std::shared_ptr<Static> newStatic = generate_static(x, y, 0x01);
+    std::shared_ptr<Static> newStatic = generate_static(x, y, 0x81);
     // return generated static object
     return newStatic;
 }
