@@ -43,10 +43,10 @@ class Tilemap {
         int get_spacing() const { return grid_spacing; }
 
         // entity shift methods
-        bool sprite_left(int x, int y) { return move_sprite(x, y, x-1, y); }
-        bool sprite_right(int x, int y) { return move_sprite(x, y, x+1, y); }
-        bool sprite_up(int x, int y) { return move_sprite(x, y, x, y-1); }
-        bool sprite_down(int x, int y) { return move_sprite(x, y, x, y+1); }
+        bool sprite_left(int x, int y) { return move_sprite(x, y, x-1, y); sprite(x,y)->direction() = SpriteDirection::LEFT; }
+        bool sprite_right(int x, int y) { return move_sprite(x, y, x+1, y); sprite(x,y)->direction() = SpriteDirection::RIGHT; }
+        bool sprite_up(int x, int y) { return move_sprite(x, y, x, y-1); sprite(x,y)->direction() = SpriteDirection::UP; }
+        bool sprite_down(int x, int y) { return move_sprite(x, y, x, y+1); sprite(x,y)->direction() = SpriteDirection::DOWN; }
         bool move_sprite(int start_x, int start_y, int end_x, int end_y);
 
         // draw method
