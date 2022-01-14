@@ -57,10 +57,10 @@ SDL_Renderer* renderer;
 
 // *** CHANGE SO THAT ONLY GLOBAL IS ENGINE *** //
 // game containers
-std::unique_ptr<EntityList> entList;
-std::unique_ptr<Tilemap> map;
+std::shared_ptr<EntityList> entList;
+std::shared_ptr<Tilemap> map;
 // generator objects
-std::unique_ptr<EntityFactory> entFact;
+std::shared_ptr<EntityFactory> entFact;
 // resource manager objects
 std::shared_ptr<SoundManager> soundMngr;
 std::shared_ptr<TextureManager> textureMngr;
@@ -74,10 +74,10 @@ std::unique_ptr<Engine> engine;
 // *** NEEDS PROPER ERROR CHECKING EVENTUALLY ** //
 bool load_resources(void) {
     // make tilemap object
-    map = std::make_unique<Tilemap>(MAP_WIDTH, MAP_HEIGHT, GRID_SIZE);
+    map = std::make_shared<Tilemap>(MAP_WIDTH, MAP_HEIGHT, GRID_SIZE);
 
     // make entity list object
-    entList = std::make_unique<EntityList>();
+    entList = std::make_shared<EntityList>();
 
     // make and init texture manager
     textureMngr = std::make_shared<TextureManager>(renderer, GRID_SIZE);
@@ -87,11 +87,11 @@ bool load_resources(void) {
     soundMngr = std::make_shared<SoundManager>();
     // soundMngr->init_sounds();
 
-    // initialize EntityFactory (nullptr for sound mngr for now)
-    entFact = std::make_unique<EntityFactory>(textureMngr, soundMngr);
+    // initialize EntityFactory with AssetManager object ptrs
+    entFact = std::make_shared<EntityFactory>(textureMngr, soundMngr);
 
     // initialize engine object
-    engine = std::make_unique<Engine>(map, entList, entFact)
+    engine = std::make_unique<Engine>(map, entList, entFact);
 
     return true;
 }
@@ -99,7 +99,7 @@ bool load_resources(void) {
 // *** NEEDS PROPER ERROR CHECKING EVENTUALLY *** //
 bool init_game(void) {
     // initialize SDL and SDL_timer
-    SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER)
+    SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER);
 
     // init sound/music
     Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024);
@@ -118,13 +118,14 @@ bool init_game(void) {
 }
 
 void game_loop(void) {
-    // loop until quit flag flipped
-    while (!quit_flag) {
+    // loop until quit command
+    GameState game_state = GameState::RUNNING;
+    while (game_state != GameState::QUIT) {
         // get start of loop time
         Uint64 start = SDL_GetPerformanceCounter();
 
-        // check controller inputs (change user vars like Player) and store to Enum type
-        // GameState gameState = engine->input(EntityList, Tilemap);
+        // check controller inputs and set gamestate
+        game_state = engine->input();
 
         // check game state (paused, quit, etc), wait for action if not 0
 
@@ -136,9 +137,14 @@ void game_loop(void) {
 
         // calculate elapsed time
         Uint64 end = SDL_GetPerformanceCounter();
-        float elapsedMS = (end - start) / (float) SDL_GetPerformanceFrequency() * 1000.0f;
+        float elapsedMS = (end - start) / ((float) SDL_GetPerformanceFrequency() * 1000.0f);
         // delay to cap framerate
-        SDL_Delay(std::max(floor(16.666f - elapsedMS),0));
+        SDL_Delay(
+                std::max(
+                    static_cast<int>(16.666f - elapsedMS),
+                    0
+                    )
+                );
     }
 }
 
