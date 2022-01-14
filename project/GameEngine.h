@@ -30,20 +30,34 @@ enum class GameState {
 
 class Engine {
     private:
-        std::unique_ptr<Tilemap> map;
-        std::unique_ptr<EntityList> entList;
-        std::unique_ptr<EntityFactory> entFact;
+        std::shared_ptr<Tilemap> map;
+        std::shared_ptr<EntityList> entList;
+        std::shared_ptr<EntityFactory> entFact;
 
     public:
+        // constructor
+        Engine(std::shared_ptr<Tilemap> map, std::shared_ptr<EntityList> entList, std::shared_ptr<EntityFactory> entFact);
+
+        // destructor
+        ~Engine();
+
         // initialize tilemap with data
         void populate_map();
         // process input events
         GameState input();
+        void handle_keypress(SDL_Event event);
+        void handle_mousepress(SDL_Event event);
+
         // execute one game logic step
         void step();
         // render to screen
         void render(SDL_Renderer* renderer);
 };
+
+Engine::Engine(std::shared_ptr<Tilemap> map, std::shared_ptr<EntityList> entList, std::shared_ptr<EntityFactory> entFact) :
+    map(map), entList(entList), entFact(entFact) {}
+
+Engine::~Engine() {}
 
 void Engine::populate_map() {
     // call seed generation function
@@ -78,19 +92,29 @@ GameState Engine::input() {
 }
 
 // empty keypress handling function
-void Engine::handle_keypress(event) {}
+void Engine::handle_keypress(SDL_Event event) {}
 
 // empty mousepress handling function
-void Engine::handle_mousepress(event) {}
+void Engine::handle_mousepress(SDL_Event event) {}
 
 // game logic step forward
 void Engine::step() {
+    // evaluate next steps for Enemies
+    
+    // perform scrolling operations
 
 }
 
 // render data onto background
 void render(SDL_Renderer* renderer) {
+    // clear screen
+    SDL_RenderClear(renderer);
 
+    // re-render background, potentially shifted
+    // map->render_background();
+
+    // render sprites within window
+    // map->render_sprites();
 }
 
 #endif
