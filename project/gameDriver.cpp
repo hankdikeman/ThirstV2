@@ -11,7 +11,6 @@
 #include <array>
 #include <algorithm>
 #include <stdbool.h>
-#include <stdio.h>
 
 // core SDL header
 #include <SDL.h>
@@ -39,8 +38,8 @@
 
 // map info
 #define GRID_SIZE (64)
-#define MAP_WIDTH (16)
-#define MAP_HEIGHT (16)
+#define MAP_WIDTH (64)
+#define MAP_HEIGHT (64)
 
 // define framerate
 #define FRAMERATE (60.0f)
@@ -55,16 +54,6 @@ void populate_data(void);
 SDL_Window* window;
 SDL_Renderer* renderer;
 
-// *** CHANGE SO THAT ONLY GLOBAL IS ENGINE *** //
-// game containers
-std::shared_ptr<EntityList> entList;
-std::shared_ptr<Tilemap> map;
-// generator objects
-std::shared_ptr<EntityFactory> entFact;
-// resource manager objects
-std::shared_ptr<SoundManager> soundMngr;
-std::shared_ptr<TextureManager> textureMngr;
-
 // engine pointer
 std::unique_ptr<Engine> engine;
 
@@ -74,21 +63,21 @@ std::unique_ptr<Engine> engine;
 // *** NEEDS PROPER ERROR CHECKING EVENTUALLY ** //
 bool load_resources(void) {
     // make tilemap object
-    map = std::make_shared<Tilemap>(MAP_WIDTH, MAP_HEIGHT, GRID_SIZE);
+    std::shared_ptr<Tilemap> map = std::make_shared<Tilemap>(MAP_WIDTH, MAP_HEIGHT, GRID_SIZE);
 
     // make entity list object
-    entList = std::make_shared<EntityList>();
+    std::shared_ptr<EntityList> entList = std::make_shared<EntityList>();
 
     // make and init texture manager
-    textureMngr = std::make_shared<TextureManager>(renderer, GRID_SIZE);
+    std::shared_ptr<TextureManager> textureMngr = std::make_shared<TextureManager>(renderer, GRID_SIZE);
     textureMngr->init_textures();
     
     // make and init sound manager (not ready yet)
-    soundMngr = std::make_shared<SoundManager>();
+    std::shared_ptr<SoundManager> soundMngr = std::make_shared<SoundManager>();
     // soundMngr->init_sounds();
 
     // initialize EntityFactory with AssetManager object ptrs
-    entFact = std::make_shared<EntityFactory>(textureMngr, soundMngr);
+    std::shared_ptr<EntityFactory> entFact = std::make_shared<EntityFactory>(textureMngr, soundMngr);
 
     // initialize engine object
     engine = std::make_unique<Engine>(map, entList, entFact);
@@ -128,30 +117,25 @@ void game_loop(void) {
         game_state = engine->input();
 
         // check game state (paused, quit, etc), wait for action if not 0
+        if (game_state == GameState::PAUSED) { engine->pause_game(renderer); }
 
         // game engine call (change AI vars like enemies)
-        // engine->step();
+        engine->step();
 
-        // render call (req: renderer, EntityList, Tilemap)
-        // engine->render(renderer);
+        // render call
+        engine->render(renderer);
 
         // calculate elapsed time
         Uint64 end = SDL_GetPerformanceCounter();
-        float elapsedMS = (end - start) / ((float) SDL_GetPerformanceFrequency() * 1000.0f);
+        float elapsedMS = (end - start) / (float) SDL_GetPerformanceFrequency() * 1000.0f;
         // delay to cap framerate
-        SDL_Delay(
-                std::max(
-                    static_cast<int>(16.666f - elapsedMS),
-                    0
-                    )
-                );
+        SDL_Delay(std::max(static_cast<int>(16.666f - elapsedMS), 0));
     }
 }
 
 void populate_data(void) {
-
-    // engine->populate_map()
-
+    // populate game entities
+    engine->populate_map();
 }
 
 void kill_game(void) {
