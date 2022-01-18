@@ -38,9 +38,9 @@ class Tilemap {
         std::shared_ptr<Static>& background(int x, int y) { return map[x*map_width + y].background_layer; }
 
         // map getters
-        int get_height() const { return map_height; }
-        int get_width() const { return map_width; }
-        int get_spacing() const { return grid_spacing; }
+        int& height() { return map_height; }
+        int& width() { return map_width; }
+        int& spacing() { return grid_spacing; }
 
         // entity shift methods
         bool sprite_left(int x, int y) { return move_sprite(x, y, x-1, y); sprite(x,y)->direction() = SpriteDirection::LEFT; }
@@ -49,7 +49,8 @@ class Tilemap {
         bool sprite_down(int x, int y) { return move_sprite(x, y, x, y+1); sprite(x,y)->direction() = SpriteDirection::DOWN; }
         bool move_sprite(int start_x, int start_y, int end_x, int end_y);
 
-        // draw method
+        // Sprite rendering functions
+        void render_sprites(SDL_Renderer* renderer);
         void draw(SDL_Renderer* renderer, int x, int y);
 
         // status methods
@@ -105,6 +106,15 @@ bool Tilemap::move_sprite(int start_x, int start_y, int end_x, int end_y) {
             }
     }
     return false;
+}
+
+void Tilemap::render_sprites(SDL_Renderer* renderer) {
+    // draw each spot on the map
+    for (int i = 0; i < this->width(); i++) {
+        for (int j = 0; j < this->height(); j++) {
+            this->draw(renderer, i, j);
+        }
+    }
 }
 
 // draw Tilemap contents to window

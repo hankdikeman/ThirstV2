@@ -33,13 +33,13 @@ class EntityList {
 
         // destructor
         ~EntityList() {}
-
-        // getters
-        std::vector<std::shared_ptr<Sprite> >& get_enemy_list() { return enemy_list; }
-        std::shared_ptr<Sprite>& get_enemy(int idx) { return enemy_list[idx]; }
+        // reference getter
         std::shared_ptr<Sprite>& get_player() { return player; }
 
-        // setters
+        // enemy getters
+        std::vector<std::shared_ptr<Sprite> >& get_enemy_list() { return enemy_list; }
+        std::shared_ptr<Sprite>& get_enemy(int idx) { return enemy_list[idx]; }
+        // enemy setters
         void add_enemy(std::shared_ptr<Sprite> enemy) { enemy_list.push_back(enemy); }
 
         // delete methods
