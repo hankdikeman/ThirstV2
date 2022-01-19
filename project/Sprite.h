@@ -54,10 +54,12 @@ class Sprite: public Drawable {
         void set_texture(SDL_Texture* text, int num_cycles);
         void set_texture(SDL_Texture* text, std::array<int, 2> ssize);
 
-        // direction reference getter
-        SpriteDirection& direction() { return sprite_direction; }
-        // state setter and getter
-        SpriteState& state() { return sprite_state; }
+        // direction setters and getters
+        SpriteDirection get_direction() { return sprite_direction; }
+        void set_direction(SpriteDirection direction) { this->sprite_direction = direction; }
+        // state getters and setter
+        SpriteState get_state() { return sprite_state; }
+        void set_state(SpriteState state) { this->sprite_state = state; }
 
         // health reference getters
         int& max_health() { return sprite_max_health; }
@@ -69,6 +71,8 @@ class Sprite: public Drawable {
 
         // animation cycle iteration
         void increment_frame();
+        const SDL_RendererFlip get_flip();
+        const double get_angle();
 };
 
 // source size texture setter
@@ -109,6 +113,36 @@ const SDL_Rect* Sprite::get_srcrect() {
 
 void Sprite::increment_frame() {
     curr_frame = (curr_frame + 1) % num_cycles;
+}
+
+const SDL_RendererFlip Sprite::get_flip() {
+    switch(sprite_direction) {
+        case SpriteDirection::DOWN:
+        case SpriteDirection::UP:
+        case SpriteDirection::RIGHT:
+            return SDL_FLIP_NONE;
+            break;
+        case SpriteDirection::LEFT:
+            return SDL_FLIP_HORIZONTAL;
+            break;
+    }
+    return SDL_FLIP_NONE;
+}
+
+const double Sprite::get_angle() {
+    switch(sprite_direction) {
+        case SpriteDirection::DOWN:
+            return 90.0;
+            break;
+        case SpriteDirection::UP:
+            return 270.0;
+            break;
+        case SpriteDirection::RIGHT:
+        case SpriteDirection::LEFT:
+            return 0.0;
+            break;
+    }
+    return 0.0;
 }
 
 #endif

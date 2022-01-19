@@ -43,10 +43,10 @@ class Tilemap {
         int& spacing() { return grid_spacing; }
 
         // entity shift methods
-        bool sprite_left(int x, int y) { return move_sprite(x, y, x-1, y); sprite(x,y)->direction() = SpriteDirection::LEFT; }
-        bool sprite_right(int x, int y) { return move_sprite(x, y, x+1, y); sprite(x,y)->direction() = SpriteDirection::RIGHT; }
-        bool sprite_up(int x, int y) { return move_sprite(x, y, x, y-1); sprite(x,y)->direction() = SpriteDirection::UP; }
-        bool sprite_down(int x, int y) { return move_sprite(x, y, x, y+1); sprite(x,y)->direction() = SpriteDirection::DOWN; }
+        bool sprite_left(int x, int y) { sprite(x,y)->set_direction(SpriteDirection::LEFT); return move_sprite(x, y, x-1, y); }
+        bool sprite_right(int x, int y) { sprite(x,y)->set_direction(SpriteDirection::RIGHT); return move_sprite(x, y, x+1, y); }
+        bool sprite_up(int x, int y) { sprite(x,y)->set_direction(SpriteDirection::UP); return move_sprite(x, y, x, y-1); }
+        bool sprite_down(int x, int y) { sprite(x,y)->set_direction(SpriteDirection::DOWN); return move_sprite(x, y, x, y+1); }
         bool move_sprite(int start_x, int start_y, int end_x, int end_y);
 
         // Sprite rendering functions
@@ -123,7 +123,15 @@ void Tilemap::draw(SDL_Renderer* renderer, int x, int y) {
     if (validate_coords(x,y)) {
         // draw sprite if initialized
         if (is_occupied(sprite(x,y))) {
-            SDL_RenderCopy(renderer, sprite(x,y)->get_texture(), sprite(x,y)->get_srcrect(), sprite(x,y)->get_dstrect());
+            SDL_RenderCopyEx(
+                    renderer, 
+                    sprite(x,y)->get_texture(), 
+                    sprite(x,y)->get_srcrect(), 
+                    sprite(x,y)->get_dstrect(),
+                    sprite(x,y)->get_angle(),
+                    NULL,
+                    sprite(x,y)->get_flip()
+                    );
         }
     }
 }

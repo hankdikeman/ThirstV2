@@ -71,9 +71,9 @@ std::shared_ptr<Sprite> EntityFactory::generate_sprite(int x, int y, uint8_t id)
     newSprite->health() = 100;
     newSprite->max_health() = 100;
     // set direction to default RIGHT
-    newSprite->direction() = SpriteDirection::RIGHT;
+    newSprite->set_direction(SpriteDirection::RIGHT);
     // set state to default IDLING
-    newSprite->state() = SpriteState::IDLING;
+    newSprite->set_state(SpriteState::IDLING);
     // set x and y
     newSprite->x() = x;
     newSprite->y() = y;
