@@ -80,7 +80,7 @@ void Engine::populate_map() {
     entList->get_player() = newPlayer;
     
     // *** DUMMY INITIALIZATION TO TEST *** //
-    for (int idx = 0; idx < 10; idx++) {
+    for (int idx = 0; idx < 100; idx++) {
         // generate new coords
         int newSprX = 67*59*13*idx % map->width(); int newSprY = 13*83*29*idx % map->height();
         // add to grid if not already occupied
@@ -148,7 +148,7 @@ void Engine::handle_keypress(SDL_Event event) {
 // empty mousepress handling function
 void Engine::handle_mousepress(SDL_Event event) {
     // no mouse action for now
-    return
+    return;
 }
 
 // pause game until player resumes

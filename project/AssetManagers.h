@@ -8,12 +8,14 @@
 #include <unordered_map>
 #include <memory>
 #include <array>
+#include <string>
 #include <stdbool.h>
 
 // externlib headers
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
+#include <pugixml.hpp>
 
 // internlib headers
 #include "Sprite.h"
@@ -47,17 +49,32 @@ class TextureManager {
 
 void TextureManager::init_textures() {
     // *** EVENTUALLY READ IN XML FILE FOR TEXTURE TRACKING *** //
-    
-    // initialize ID
-    uint8_t newID = (0b00000001);
-    // load surface
-    SDL_Surface* newSurf = IMG_Load("Resources/PCSprite.png");
-    // convert to texture
-    SDL_Texture* newTexture = SDL_CreateTextureFromSurface(renderer, newSurf);
-    // free surface
-    SDL_FreeSurface(newSurf);
-    // push to hashmap
-    texture_map[newID] = newTexture;
+
+    // load in texture xml data from file
+    pugi::xml_document text_doc;
+    if(!text_doc.load_file("Resources/TextureDirectory.xml")) {
+        std::cout << "TextDir not loaded right" << std::endl;
+    }
+    pugi::xml_node text_directory = text_doc.child("TextureDirectory");
+
+    // loop through texture XML data
+    for (pugi::xml_node record = text_directory.first_child(); record; record = record.next_sibling()) {
+        // load ID
+        uint8_t newID = record.attribute("id").as_int();
+        
+        // generate surface from image
+        SDL_Surface* newSurf = IMG_Load(record.child_value("filename"));
+        // convert to texture
+        SDL_Texture* newTexture = SDL_CreateTextureFromSurface(renderer, newSurf);
+        // free surface
+        SDL_FreeSurface(newSurf);
+        // push to hashmap
+        texture_map[newID] = newTexture;
+
+        // log ID and filename
+        std::cout << "Text ID: " << record.attribute("id").as_int();
+        std::cout << ", Filename: " << record.child_value("filename") << std::endl;
+    }
 }
 
 TextureManager::~TextureManager() {
@@ -85,13 +102,27 @@ class SoundManager {
 };
 
 void SoundManager::init_sounds() {
-    // *** EVENTUALLY READ IN XML FILE FOR SOUND TRACKING *** //
-    
-    // initialize sound and ID
-    uint8_t newID = (0b00000001);
-    Mix_Chunk* newSound = Mix_LoadWAV("playerAttack.wav");
-    // push to hashmap
-    sound_map[newID] = newSound;
+    // load in sound xml data from file
+    pugi::xml_document sound_doc;
+    if(!sound_doc.load_file("Resources/SoundDirectory.xml")) {
+        std::cout << "SoundDir not loaded right" << std::endl;
+    }
+    pugi::xml_node sound_directory = sound_doc.child("SoundDirectory.xml");
+
+    // loop through sound XML data
+    for (pugi::xml_node record = sound_directory.first_child(); record; record = record.next_sibling()) {
+        // load ID
+        uint8_t newID = record.attribute("id").as_int();
+        
+        // initialize sound
+        Mix_Chunk* newSound = Mix_LoadWAV(record.child_value("filename"));
+        // push to hashmap
+        sound_map[newID] = newSound;
+
+        // log ID and filename
+        std::cout << "Sound ID: " << record.attribute("id").as_int();
+        std::cout << ", Filename: " << record.child_value("filename") << std::endl;
+    }
 }
 
 SoundManager::~SoundManager() {
