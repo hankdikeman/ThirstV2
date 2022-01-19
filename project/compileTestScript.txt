@@ -3,7 +3,7 @@
 ###
 
 # compilation test script for Tilemap and Tile classes
-clang++ `sdl2-config --libs --cflags` -O0 -Wall -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lm --std=c++14 Tilemap.cpp -o TestTilemap.out
+# clang++ `sdl2-config --libs --cflags` -O0 -Wall -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lm --std=c++14 Tilemap.cpp -o TestTilemap.out
 
 # compilation test script for prototype gameDriver file
-clang++ `sdl2-config --libs --cflags` -O0 -Wall -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lm --std=c++14 gameDriver.cpp -o PrototypeExec.out
+clang++ `pkg-config --libs --cflags sdl2 SDL2_image SDL2_mixer pugixml` -O0 -Wall -lm --std=c++14 gameDriver.cpp -o PrototypeExec.out
