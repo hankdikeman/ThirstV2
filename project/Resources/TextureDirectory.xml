@@ -3,4 +3,7 @@
     <Record id="00000001">
         <filename>Resources/PCSprite.png</filename>
     </Record>
+    <Record id="00000002">
+        <filename>Resources/ENSpider.png</filename>
+    </Record>
 </TextureDirectory>
