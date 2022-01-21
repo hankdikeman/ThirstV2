@@ -50,6 +50,7 @@ class Engine {
         ~Engine();
 
         // initialize tilemap with data
+        void create_map(SDL_Renderer* renderer);
         void populate_map();
         // process input events
         GameState input();
@@ -68,6 +69,33 @@ Engine::Engine(std::shared_ptr<Tilemap> map, std::shared_ptr<EntityList> entList
 
 Engine::~Engine() {}
 
+void Engine::create_map(SDL_Renderer* renderer) {
+    // initialize background texture and set as render target
+    SDL_Texture* bg_texture = SDL_CreateTexture(
+            renderer, 
+            SDL_PIXELFORMAT_RGBA8888, 
+            SDL_TEXTUREACCESS_TARGET, 
+            map->width()*map->spacing(),
+            map->height()*map->spacing()
+            );
+    SDL_SetRenderTarget(renderer, bg_texture);
+
+    // *** REPLACE WITH REAL BACKGROUND RENDERING *** //
+    // generate texture from image
+    SDL_Surface* newSurf = IMG_Load("Resources/StinkyMonkey.jpeg");
+    SDL_Texture* newTexture = SDL_CreateTextureFromSurface(renderer, newSurf);
+    // free surface
+    SDL_FreeSurface(newSurf);
+    SDL_RenderCopy(renderer, newTexture, NULL, NULL);
+    SDL_DestroyTexture(newTexture);
+
+    // move to tilemap
+    map->background_texture() = bg_texture;
+
+    // reset renderer target to window
+    SDL_SetRenderTarget(renderer, NULL);
+}
+
 void Engine::populate_map() {
     // call seed generation function
     // procedurally generate sand texture
@@ -80,13 +108,13 @@ void Engine::populate_map() {
     entList->get_player() = newPlayer;
     
     // *** DUMMY INITIALIZATION TO TEST *** //
-    for (int idx = 0; idx < 100; idx++) {
+    for (int idx = 0; idx < 10; idx++) {
         // generate new coords
         int newSprX = 67*59*13*idx % map->width(); int newSprY = 13*83*29*idx % map->height();
         // add to grid if not already occupied
         if (!map->is_occupied(newSprX, newSprY)) {
             // make new player shared ptr
-            std::shared_ptr<Sprite> tempSprite = entFact->generate_sprite(newSprX, newSprY, 0x01);
+            std::shared_ptr<Sprite> tempSprite = entFact->generate_sprite(newSprX, newSprY, 0x02);
             // add to tilemap and entity list
             map->sprite(newSprX, newSprY) = tempSprite;
             entList->add_enemy(tempSprite);
@@ -161,6 +189,9 @@ void Engine::step() {
     float logic_elapsed = (current_time - this->last_logic_step) / (float) SDL_GetPerformanceFrequency() * 1000.0f;
     float frame_elapsed = (current_time - this->last_frame_shift) / (float) SDL_GetPerformanceFrequency() * 1000.0f;
 
+    // set tilemap center
+    map->set_center(entList->get_player()->x(), entList->get_player()->y());
+
     // shift frames if time has passed
     if (frame_elapsed > FRAME_SHIFT_DELAY) {
         // increment player frame
@@ -173,6 +204,10 @@ void Engine::step() {
 
     // take a logic step if enough time has passed
     if (logic_elapsed > ENEMY_MOVE_DELAY) {
+        // check/update state of all enemies
+        // act on state of all enemies
+        // check health of all enemies
+
         // *** PASS OFF TO MOVEMENT FUNCTION IN SPRITE LATER *** // 
         // evaluate player position
         int player_x = entList->get_player()->x();
@@ -207,7 +242,7 @@ void Engine::render(SDL_Renderer* renderer) {
     // clear screen
     SDL_RenderClear(renderer);
     // re-render background, potentially shifted
-    // map->render_background();
+    map->render_background(renderer);
     // render sprites within window
     map->render_sprites(renderer);
     // copy to screen

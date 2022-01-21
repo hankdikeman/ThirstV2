@@ -21,12 +21,16 @@
 
 class Tilemap {
     private:
-        int map_height, map_width, grid_spacing;
+        int map_height, map_width;
+        int center_x, center_y;
+        int grid_spacing;
+        int vp_width, vp_height;
+        SDL_Texture* bg_texture;
         Tile* map;
     public:
         // constructors
         Tilemap();
-        Tilemap(int width, int height, int spacing);
+        Tilemap(int width, int height, int spacing, int vp_width, int vp_height);
 
         // destructor
         ~Tilemap();
@@ -41,6 +45,13 @@ class Tilemap {
         int& height() { return map_height; }
         int& width() { return map_width; }
         int& spacing() { return grid_spacing; }
+        SDL_Texture*& background_texture() { return bg_texture; } 
+        
+        // center setters
+        void set_center(int center_x, int center_y) {
+            this->center_x = center_x;
+            this->center_y = center_y;
+        }
 
         // entity shift methods
         bool sprite_left(int x, int y) { sprite(x,y)->set_direction(SpriteDirection::LEFT); return move_sprite(x, y, x-1, y); }
@@ -49,7 +60,8 @@ class Tilemap {
         bool sprite_down(int x, int y) { sprite(x,y)->set_direction(SpriteDirection::DOWN); return move_sprite(x, y, x, y+1); }
         bool move_sprite(int start_x, int start_y, int end_x, int end_y);
 
-        // Sprite rendering functions
+        // rendering functions
+        void render_background(SDL_Renderer* renderer);
         void render_sprites(SDL_Renderer* renderer);
         void draw(SDL_Renderer* renderer, int x, int y);
 
@@ -63,7 +75,9 @@ class Tilemap {
 Tilemap::Tilemap() : 
     map_height(64), 
     map_width(64), 
-    grid_spacing(32) {
+    grid_spacing(32),
+    vp_width(10),
+    vp_height(10) {
         // allocate map array
         map = new Tile[map_height * map_width];
         // print new ptr address
@@ -72,10 +86,12 @@ Tilemap::Tilemap() :
     }
 
 // constructor with parametrized width and height
-Tilemap::Tilemap(int width, int height, int spacing) : 
+Tilemap::Tilemap(int width, int height, int spacing, int vp_width, int vp_height) : 
     map_height(height), 
     map_width(width),
-    grid_spacing(spacing) {
+    grid_spacing(spacing),
+    vp_width(vp_width),
+    vp_height(vp_height) {
         // allocate map array
         map = new Tile[map_height * map_width];
         // print new ptr address
@@ -90,6 +106,9 @@ Tilemap::~Tilemap() {
     std::cout << map << std::endl;
     // deallocate map array
     delete[] map;
+
+    // destroy background texture if created
+    if (bg_texture) { SDL_DestroyTexture(bg_texture); }
 }
 
 // generic move sprite method
@@ -108,6 +127,18 @@ bool Tilemap::move_sprite(int start_x, int start_y, int end_x, int end_y) {
     return false;
 }
 
+void Tilemap::render_background(SDL_Renderer* renderer) {
+    // determine portion of background to be rendered
+    SDL_Rect src = {
+        (center_x - vp_width/2)*grid_spacing,
+        (center_y - vp_height/2)*grid_spacing,
+        vp_width*grid_spacing,
+        vp_height*grid_spacing
+    };
+    // render to window
+    SDL_RenderCopy(renderer, bg_texture, &src, NULL); 
+}
+
 void Tilemap::render_sprites(SDL_Renderer* renderer) {
     // draw each spot on the map
     for (int i = 0; i < this->width(); i++) {
@@ -121,13 +152,13 @@ void Tilemap::render_sprites(SDL_Renderer* renderer) {
 void Tilemap::draw(SDL_Renderer* renderer, int x, int y) {
     // check validity of coordinates
     if (validate_coords(x,y)) {
-        // draw sprite if initialized
+        // draw sprite if exists
         if (is_occupied(sprite(x,y))) {
             SDL_RenderCopyEx(
                     renderer, 
                     sprite(x,y)->get_texture(), 
                     sprite(x,y)->get_srcrect(), 
-                    sprite(x,y)->get_dstrect(),
+                    sprite(x,y)->get_dstrect(center_x-vp_width/2, center_y-vp_height/2),
                     sprite(x,y)->get_angle(),
                     NULL,
                     sprite(x,y)->get_flip()
