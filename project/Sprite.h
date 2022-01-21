@@ -28,7 +28,8 @@ enum class SpriteState {
     PLAYER, 
     IDLING, 
     ATTACKING, 
-    FLEEING
+    FLEEING,
+    DEAD
 };
 
 class Sprite: public Drawable {

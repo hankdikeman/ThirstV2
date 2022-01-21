@@ -33,8 +33,8 @@
 #include "GameEngine.h"
 
 // window definitions`
-#define WINDOW_WIDTH (768)
-#define WINDOW_HEIGHT (768)
+#define WINDOW_WIDTH (640)
+#define WINDOW_HEIGHT (640)
 
 // map info
 #define GRID_SIZE (64)
@@ -63,7 +63,7 @@ std::unique_ptr<Engine> engine;
 // *** NEEDS PROPER ERROR CHECKING EVENTUALLY ** //
 bool load_resources(void) {
     // make tilemap object
-    std::shared_ptr<Tilemap> map = std::make_shared<Tilemap>(MAP_WIDTH, MAP_HEIGHT, GRID_SIZE);
+    std::shared_ptr<Tilemap> map = std::make_shared<Tilemap>(MAP_WIDTH, MAP_HEIGHT, GRID_SIZE, WINDOW_WIDTH/GRID_SIZE, WINDOW_HEIGHT/GRID_SIZE);
 
     // make entity list object
     std::shared_ptr<EntityList> entList = std::make_shared<EntityList>();
@@ -134,6 +134,8 @@ void game_loop(void) {
 }
 
 void populate_data(void) {
+    // construct map texture
+    engine->create_map(renderer);
     // populate game entities
     engine->populate_map();
 }
