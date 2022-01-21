@@ -49,14 +49,14 @@ class Drawable {
 
         // source and destination rectangle methods
         virtual const SDL_Rect* get_srcrect() = 0;
-        const SDL_Rect* get_dstrect();
+        const SDL_Rect* get_dstrect(int offset_x = 0, int offset_y = 0);
 };
 
 // provide dest rectangle for renderer
-const SDL_Rect* Drawable::get_dstrect() {
+const SDL_Rect* Drawable::get_dstrect(int offset_x, int offset_y) {
     // update destination rectangle from position data
-    dstrect.x = this->x() * this->w();
-    dstrect.y = this->y() * this->h();
+    dstrect.x = (this->x()-offset_x) * this->w();
+    dstrect.y = (this->y()-offset_y) * this->h();
     dstrect.w = this->w();
     dstrect.h = this->h();
     // return rectangle
