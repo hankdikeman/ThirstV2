@@ -80,14 +80,16 @@ void Engine::create_map(SDL_Renderer* renderer) {
             );
     SDL_SetRenderTarget(renderer, bg_texture);
 
-    // *** REPLACE WITH REAL BACKGROUND RENDERING *** //
-    // generate texture from image
-    SDL_Surface* newSurf = IMG_Load("Resources/StinkyMonkey.jpeg");
-    SDL_Texture* newTexture = SDL_CreateTextureFromSurface(renderer, newSurf);
-    // free surface
-    SDL_FreeSurface(newSurf);
-    SDL_RenderCopy(renderer, newTexture, NULL, NULL);
-    SDL_DestroyTexture(newTexture);
+    for (int i = 0; i < map->width(); i++) {
+        for (int j = 0; j < map->height(); j++) {
+            // generate desert static tiles at i,j
+            std::shared_ptr<Static> newBg = entFact->generate_static(i,j);
+            // add desert static tiles to map
+            map->background(i,j) = newBg;
+            // render desert to background texture
+            SDL_RenderCopy(renderer, newBg->get_texture(), NULL, newBg->get_dstrect());
+        }
+    }
 
     // move to tilemap
     map->background_texture() = bg_texture;
