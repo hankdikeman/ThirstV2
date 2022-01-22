@@ -45,7 +45,7 @@ class Drawable {
 
         // texture setter and getter
         SDL_Texture* get_texture() { return texture; }
-        void set_texture(SDL_Texture* text) { texture = text; }
+        void set_texture(SDL_Texture* text) { this->texture = text; }
 
         // source and destination rectangle methods
         virtual const SDL_Rect* get_srcrect() = 0;

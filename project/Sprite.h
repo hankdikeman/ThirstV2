@@ -56,11 +56,9 @@ class Sprite: public Drawable {
         void set_texture(SDL_Texture* text, std::array<int, 2> ssize);
 
         // direction setters and getters
-        SpriteDirection get_direction() { return sprite_direction; }
-        void set_direction(SpriteDirection direction) { this->sprite_direction = direction; }
+        SpriteDirection& direction() { return sprite_direction; }
         // state getters and setter
-        SpriteState get_state() { return sprite_state; }
-        void set_state(SpriteState state) { this->sprite_state = state; }
+        SpriteState& state() { return sprite_state; }
 
         // health reference getters
         int& max_health() { return sprite_max_health; }
