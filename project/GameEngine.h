@@ -80,6 +80,7 @@ void Engine::create_map(SDL_Renderer* renderer) {
             );
     SDL_SetRenderTarget(renderer, bg_texture);
 
+    // construct background layer
     for (int i = 0; i < map->width(); i++) {
         for (int j = 0; j < map->height(); j++) {
             // generate desert static tiles at i,j
@@ -88,6 +89,20 @@ void Engine::create_map(SDL_Renderer* renderer) {
             map->background(i,j) = newBg;
             // render desert to background texture
             SDL_RenderCopy(renderer, newBg->get_texture(), NULL, newBg->get_dstrect());
+        }
+    }
+
+    // construct static decoration layer
+    for (int i = 0; i < map->width(); i++) {
+        for (int j = 0; j < map->height(); j++) {
+            if (rand() % 100 < 5) {
+                // generate desert static tiles at i,j
+                std::shared_ptr<Static> newStat = entFact->generate_static(i,j,0xF5);
+                // add desert static tiles to map
+                map->statics(i,j) = newStat;
+                // render desert to background texture
+                SDL_RenderCopy(renderer, newStat->get_texture(), NULL, newStat->get_dstrect());
+            }
         }
     }
 

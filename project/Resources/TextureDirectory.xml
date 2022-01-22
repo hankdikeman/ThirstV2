@@ -18,4 +18,7 @@
     <Record id="0xF4">
         <filename>Resources/Desert4.png</filename>
     </Record>
+    <Record id="0xF5">
+        <filename>Resources/Oasis1.png</filename>
+    </Record>
 </TextureDirectory>
