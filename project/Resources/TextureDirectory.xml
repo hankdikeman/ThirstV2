@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <TextureDirectory>
-    <Record id="00000001">
+    <Record id="0x01">
         <filename>Resources/PCSprite.png</filename>
     </Record>
-    <Record id="00000002">
+    <Record id="0x02">
         <filename>Resources/ENSpider.png</filename>
+    </Record>
+    <Record id="0xF1">
+        <filename>Resources/Desert1.png</filename>
+    </Record>
+    <Record id="0xF2">
+        <filename>Resources/Desert2.png</filename>
+    </Record>
+    <Record id="0xF3">
+        <filename>Resources/Desert3.png</filename>
+    </Record>
+    <Record id="0xF4">
+        <filename>Resources/Desert4.png</filename>
     </Record>
 </TextureDirectory>
