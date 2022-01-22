@@ -8,6 +8,7 @@
 #include <bitset>
 #include <memory>
 #include <array>
+#include <stdio.h>
 #include <stdbool.h>
 
 // externlib headers
@@ -20,6 +21,9 @@
 
 #ifndef ENTITYFACTORY_H
 #define ENTITYFACTORY_H
+
+// *** WILL NEED TO BE DONE MORE SENSIBLY LATER *** // 
+#define NUM_BG_TEXTURES (4)
 
 class EntityFactory {
     private:
@@ -64,16 +68,15 @@ std::shared_ptr<Sprite> EntityFactory::generate_sprite(int x, int y, uint8_t id)
     // generate new player
     std::shared_ptr<Sprite> newSprite = std::make_shared<Sprite>();
 
-    // *** EVENTUALLY READ IN ATTRIBUTES FROM EXTERNAL FILE *** //
     // set ID
     newSprite->id() = id;
     // set health
     newSprite->health() = 100;
     newSprite->max_health() = 100;
     // set direction to default RIGHT
-    newSprite->set_direction(SpriteDirection::RIGHT);
+    newSprite->direction() = SpriteDirection::RIGHT;
     // set state to default IDLING
-    newSprite->set_state(SpriteState::IDLING);
+    newSprite->state() = SpriteState::IDLING;
     // set x and y
     newSprite->x() = x;
     newSprite->y() = y;
@@ -88,6 +91,8 @@ std::shared_ptr<Sprite> EntityFactory::generate_sprite(int x, int y, uint8_t id)
     newSprite->w() = textureMngr->get_grid_size();
     newSprite->h() = textureMngr->get_grid_size();
 
+    // query for texture and set 
+    newSprite->set_texture( textureMngr->query_texture(newSprite->id()) );
     // return Player
     return newSprite;
 }
@@ -95,7 +100,8 @@ std::shared_ptr<Sprite> EntityFactory::generate_sprite(int x, int y, uint8_t id)
 // generate sprite of random id
 std::shared_ptr<Static> EntityFactory::generate_static(int x, int y) {
     // call internal method with some randomized ID
-    std::shared_ptr<Static> newStatic = generate_static(x, y, 0x81);
+    int randID = 0xF0 + (rand() % NUM_BG_TEXTURES) + 1;
+    std::shared_ptr<Static> newStatic = generate_static(x, y, randID);
     // return generated static object
     return newStatic;
 }
@@ -105,7 +111,6 @@ std::shared_ptr<Static> EntityFactory::generate_static(int x, int y, uint8_t id)
     // generate new player
     std::shared_ptr<Static> newStatic = std::make_shared<Static>();
 
-    // *** EVENTUALLY READ IN ATTRIBUTES FROM EXTERNAL FILE *** //
     // set ID
     newStatic->id() = id;
     // set x and y
@@ -116,8 +121,10 @@ std::shared_ptr<Static> EntityFactory::generate_static(int x, int y, uint8_t id)
     // query for sound and set
     // NO SOUNDS FOR NOW
     // set drawsize
-    newStatic->w() = (textureMngr->get_grid_size());
+    newStatic->w() = textureMngr->get_grid_size();
     newStatic->h() = textureMngr->get_grid_size();
+    // set source size to entire texture
+    SDL_QueryTexture(newStatic->get_texture(), NULL, NULL, &(newStatic->src_w()), &(newStatic->src_h()));
 
     // return Player
     return newStatic;
