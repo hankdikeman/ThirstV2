@@ -54,10 +54,34 @@ class Tilemap {
         }
 
         // entity shift methods
-        bool sprite_left(int x, int y) { sprite(x,y)->set_direction(SpriteDirection::LEFT); return move_sprite(x, y, x-1, y); }
-        bool sprite_right(int x, int y) { sprite(x,y)->set_direction(SpriteDirection::RIGHT); return move_sprite(x, y, x+1, y); }
-        bool sprite_up(int x, int y) { sprite(x,y)->set_direction(SpriteDirection::UP); return move_sprite(x, y, x, y-1); }
-        bool sprite_down(int x, int y) { sprite(x,y)->set_direction(SpriteDirection::DOWN); return move_sprite(x, y, x, y+1); }
+        bool sprite_left(int x, int y) { 
+            if (sprite(x,y)->direction() != SpriteDirection::LEFT) {
+                sprite(x,y)->direction() = SpriteDirection::LEFT; 
+                return true;
+            }
+            return move_sprite(x, y, x-1, y); 
+        }
+        bool sprite_right(int x, int y) {
+            if (sprite(x,y)->direction() != SpriteDirection::RIGHT) {
+                sprite(x,y)->direction() = SpriteDirection::RIGHT; 
+                return true;
+            }
+            return move_sprite(x, y, x+1, y); 
+        }
+        bool sprite_up(int x, int y) { 
+            if (sprite(x,y)->direction() != SpriteDirection::UP) {
+                sprite(x,y)->direction() = SpriteDirection::UP; 
+                return true;
+            }
+            return move_sprite(x, y, x, y-1); 
+        }
+        bool sprite_down(int x, int y) {
+            if (sprite(x,y)->direction() != SpriteDirection::DOWN) {
+                sprite(x,y)->direction() = SpriteDirection::DOWN;
+                return true;
+            }
+            return move_sprite(x, y, x, y+1); 
+        }
         bool move_sprite(int start_x, int start_y, int end_x, int end_y);
 
         // rendering functions
