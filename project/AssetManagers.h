@@ -44,12 +44,15 @@ class TextureManager {
         void init_textures();
 
         // index texture from id
-        SDL_Texture*& query_texture(uint8_t id) { return texture_map[id]; }
+        SDL_Texture*& query_texture(uint8_t id);
 };
 
-void TextureManager::init_textures() {
-    // *** EVENTUALLY READ IN XML FILE FOR TEXTURE TRACKING *** //
+SDL_Texture*& TextureManager::query_texture(uint8_t id) { 
+    return texture_map[id]; 
+}
 
+void TextureManager::init_textures() {
+    
     // load in texture xml data from file
     pugi::xml_document text_doc;
     if(!text_doc.load_file("Resources/TextureDirectory.xml")) {
@@ -66,13 +69,19 @@ void TextureManager::init_textures() {
         SDL_Surface* newSurf = IMG_Load(record.child_value("filename"));
         // convert to texture
         SDL_Texture* newTexture = SDL_CreateTextureFromSurface(renderer, newSurf);
+
+        if (newSurf == nullptr) {
+            std::cout << "failed to load image!" << std::endl;
+        }
+
         // free surface
         SDL_FreeSurface(newSurf);
         // push to hashmap
         texture_map[newID] = newTexture;
 
         // log ID and filename
-        std::cout << "Text ID: " << record.attribute("id").as_int();
+        std::cout << "Text ID: " << unsigned(newID);
+        std::cout << ", ptr Address: " << texture_map[newID];
         std::cout << ", Filename: " << record.child_value("filename") << std::endl;
     }
 }
