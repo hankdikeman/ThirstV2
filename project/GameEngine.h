@@ -19,10 +19,12 @@
 #include "Tilemap.h"
 #include "EntityList.h"
 #include "EntityFactory.h"
+#include "PerlinNoise.h"
 
 #ifndef GAMEENGINE_H
 #define GAMEENGINE_H
 
+#define NOISE_INTERVALS (5.0l)
 #define ENEMY_MOVE_DELAY (300.0f)
 #define FRAME_SHIFT_DELAY (250.0f)
 
@@ -73,7 +75,7 @@ void Engine::create_map(SDL_Renderer* renderer) {
     // initialize background texture and set as render target
     SDL_Texture* bg_texture = SDL_CreateTexture(
             renderer, 
-            SDL_PIXELFORMAT_RGBA8888, 
+            SDL_PIXELFORMAT_ARGB8888, 
             SDL_TEXTUREACCESS_TARGET, 
             map->width()*map->spacing(),
             map->height()*map->spacing()
@@ -92,12 +94,66 @@ void Engine::create_map(SDL_Renderer* renderer) {
         }
     }
 
+    // *** PERLIN NOISE TEST *** //
+    int noise_width = map->width()*map->spacing() / 8;
+    int noise_height = map->height()*map->spacing() / 8;
+    // initialize background texture and set as render target
+    SDL_Texture* noise_texture = SDL_CreateTexture(
+            renderer, 
+            SDL_PIXELFORMAT_ARGB8888, 
+            SDL_TEXTUREACCESS_STREAMING, 
+            noise_width,
+            noise_height
+            );
+    // make vector of pixels
+    std::vector< unsigned char > pixels( noise_width*noise_height*4, 0 );
+    std::cout << "vector of length: " << noise_width*noise_height*4 << std::endl;
+    std::cout << "width: " << noise_width << std::endl;
+    std::cout << "height: " << noise_height << std::endl;
+
+    // initialize Perlin Noise generator
+    PerlinNoise perlin = PerlinNoise();
+
+    double x, y, n;
+    for (int i = 0; i < noise_width; i++) {
+        for (int j = 0; j < noise_height; j++) {
+            // write random color
+            const unsigned int offset = i*noise_width*4 + j*4;
+            // get double positions
+            x = (double) (10*i) / ((double) noise_width);
+            y = (double) (10*j) / ((double) noise_height);
+            n = perlin.noise(x,y);
+            n = floor((n - floor(n)) * NOISE_INTERVALS);
+            // write to pixels
+            pixels[offset + 3] = SDL_ALPHA_OPAQUE;
+            pixels[offset + 2] = (n/NOISE_INTERVALS) * (0xf3 - 0x44) + 0x44;
+            pixels[offset + 1] = (n/NOISE_INTERVALS) * (0xb4 - 0x2c) + 0x2c;
+            pixels[offset + 0] = (n/NOISE_INTERVALS) * (0x8b - 0x1c) + 0x1c;
+        }
+    }
+
+    // copy pixels to texture
+    unsigned char* lockedPixels = nullptr;
+    int pitch = 0;
+    SDL_LockTexture
+        (
+        noise_texture,
+        NULL,
+        reinterpret_cast< void** >( &lockedPixels ),
+        &pitch
+        );
+    std::memcpy( lockedPixels, pixels.data(), pixels.size() );
+    SDL_UnlockTexture( noise_texture );
+
+    // render noise texture to bg_texture
+    SDL_RenderCopy(renderer, noise_texture, NULL, NULL);
+
     // construct static decoration layer
     for (int i = 0; i < map->width(); i++) {
         for (int j = 0; j < map->height(); j++) {
             if (rand() % 100 < 5) {
                 // generate desert static tiles at i,j
-                std::shared_ptr<Static> newStat = entFact->generate_static(i,j,0xF5);
+                std::shared_ptr<Static> newStat = entFact->generate_static(i,j,0xF5+(rand()%3));
                 // add desert static tiles to map
                 map->statics(i,j) = newStat;
                 // render desert to background texture
