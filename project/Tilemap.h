@@ -159,8 +159,17 @@ void Tilemap::render_background(SDL_Renderer* renderer) {
         vp_width*grid_spacing,
         vp_height*grid_spacing
     };
-    // render to window
-    SDL_RenderCopy(renderer, bg_texture, &src, NULL); 
+    // determine portion of window to render to
+    int dst_x = center_x > vp_width/2 ? 0 : vp_width/2-center_x;
+    int dst_y = center_y > vp_height/2 ? 0 : vp_height/2-center_y;
+    SDL_Rect dst = {
+        dst_x*grid_spacing,
+        dst_y*grid_spacing,
+        (vp_width-dst_x)*grid_spacing,
+        (vp_height-dst_y)*grid_spacing
+    };
+    // render to windo
+    SDL_RenderCopy(renderer, bg_texture, &src, &dst); 
 }
 
 void Tilemap::render_sprites(SDL_Renderer* renderer) {
