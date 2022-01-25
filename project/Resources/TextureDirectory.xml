@@ -21,4 +21,10 @@
     <Record id="0xF5">
         <filename>Resources/Oasis1.png</filename>
     </Record>
+    <Record id="0xF6">
+        <filename>Resources/Decor1.png</filename>
+    </Record>
+    <Record id="0xF7">
+        <filename>Resources/Decor2.png</filename>
+    </Record>
 </TextureDirectory>
