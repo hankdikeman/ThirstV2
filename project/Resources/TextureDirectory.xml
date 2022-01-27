@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <TextureDirectory>
     <Record id="0x01">
-        <filename>Resources/PCSprite.png</filename>
+        <filename>Resources/CactusSprite.png</filename>
     </Record>
     <Record id="0x02">
         <filename>Resources/ENSpider.png</filename>
