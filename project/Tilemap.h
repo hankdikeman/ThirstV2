@@ -152,21 +152,25 @@ bool Tilemap::move_sprite(int start_x, int start_y, int end_x, int end_y) {
 }
 
 void Tilemap::render_background(SDL_Renderer* renderer) {
-    // determine portion of background to be rendered
-    SDL_Rect src = {
-        (center_x - vp_width/2)*grid_spacing,
-        (center_y - vp_height/2)*grid_spacing,
-        vp_width*grid_spacing,
-        vp_height*grid_spacing
-    };
-    // determine portion of window to render to
+    // determine what portion of background texture to be rendered
     int dst_x = center_x > vp_width/2 ? 0 : vp_width/2-center_x;
     int dst_y = center_y > vp_height/2 ? 0 : vp_height/2-center_y;
+    int src_x = center_x < vp_width/2 ? 0 : center_x-vp_width/2;
+    int src_y = center_y < vp_height/2 ? 0 : center_y - vp_height/2;
+    int rect_w = center_x + vp_width/2 < map_width ? vp_width : (vp_width/2 + (map_width - center_x));
+    int rect_h = center_y + vp_height/2 < map_height ? vp_height : (vp_height/2 + (map_height - center_y));
+    // construct rectangle objects
     SDL_Rect dst = {
         dst_x*grid_spacing,
         dst_y*grid_spacing,
-        (vp_width-dst_x)*grid_spacing,
-        (vp_height-dst_y)*grid_spacing
+        rect_w*grid_spacing,
+        rect_h*grid_spacing
+    };
+    SDL_Rect src = {
+        src_x*grid_spacing,
+        src_y*grid_spacing,
+        rect_w*grid_spacing,
+        rect_h*grid_spacing
     };
     // render to windo
     SDL_RenderCopy(renderer, bg_texture, &src, &dst); 
