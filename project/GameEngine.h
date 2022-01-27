@@ -24,7 +24,10 @@
 #ifndef GAMEENGINE_H
 #define GAMEENGINE_H
 
-#define NOISE_INTERVALS (5.0l)
+#define NOISE_FREQUENCY (10.0l)
+#define ROUGH_INTERVAL (5.0l)
+#define FINE_INTERVAL (5.0l)
+#define NOISE_DOWNSCALING (8)
 #define ENEMY_MOVE_DELAY (300.0f)
 #define FRAME_SHIFT_DELAY (250.0f)
 
@@ -95,8 +98,8 @@ void Engine::create_map(SDL_Renderer* renderer) {
     }
 
     // *** PERLIN NOISE TEST *** //
-    int noise_width = map->width()*map->spacing() / 8;
-    int noise_height = map->height()*map->spacing() / 8;
+    int noise_width = map->width()*map->spacing() / NOISE_DOWNSCALING;
+    int noise_height = map->height()*map->spacing() / NOISE_DOWNSCALING;
     // initialize background texture and set as render target
     SDL_Texture* noise_texture = SDL_CreateTexture(
             renderer, 
@@ -114,21 +117,30 @@ void Engine::create_map(SDL_Renderer* renderer) {
     // initialize Perlin Noise generator
     PerlinNoise perlin = PerlinNoise();
 
-    double x, y, n;
+    double x, y, n, rough_n, fine_n;
+    double rough_scaler, fine_scaler;
     for (int i = 0; i < noise_width; i++) {
         for (int j = 0; j < noise_height; j++) {
             // write random color
             const unsigned int offset = i*noise_width*4 + j*4;
             // get double positions
-            x = (double) (10*i) / ((double) noise_width);
-            y = (double) (10*j) / ((double) noise_height);
+            x = (double) (NOISE_FREQUENCY*i) / ((double) noise_width);
+            y = (double) (NOISE_FREQUENCY*j) / ((double) noise_height);
             n = perlin.noise(x,y);
-            n = floor((n - floor(n)) * NOISE_INTERVALS);
+            
+            // rough_n = (ROUGH_INTERVAL*n) - floor(ROUGH_INTERVAL*n);
+            rough_n = (n - floor(n)) * ROUGH_INTERVAL;
+            fine_n = (FINE_INTERVAL*rough_n) - floor(FINE_INTERVAL*rough_n);
+            rough_n = floor(rough_n) / ROUGH_INTERVAL;
+
+            // precalc constants
+            rough_scaler = rough_n; // NOISE_INTERVALS;
+            fine_scaler = 0.25 + 0.75*fine_n; //(0.25 + 0.75*(fine_n/RIDGE_INTERVALS));
             // write to pixels
             pixels[offset + 3] = SDL_ALPHA_OPAQUE;
-            pixels[offset + 2] = (n/NOISE_INTERVALS) * (0xf3 - 0x44) + 0x44;
-            pixels[offset + 1] = (n/NOISE_INTERVALS) * (0xb4 - 0x2c) + 0x2c;
-            pixels[offset + 0] = (n/NOISE_INTERVALS) * (0x8b - 0x1c) + 0x1c;
+            pixels[offset + 2] = (rough_scaler * fine_scaler) * (105 - 255) + 255;
+            pixels[offset + 1] = (rough_scaler * fine_scaler) * (47 - 151) + 151;
+            pixels[offset + 0] = (rough_scaler * fine_scaler) * (16 - 54) + 54;
         }
     }
 
@@ -147,6 +159,7 @@ void Engine::create_map(SDL_Renderer* renderer) {
 
     // render noise texture to bg_texture
     SDL_RenderCopy(renderer, noise_texture, NULL, NULL);
+    SDL_DestroyTexture(noise_texture);
 
     // construct static decoration layer
     for (int i = 0; i < map->width(); i++) {
