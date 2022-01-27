@@ -103,6 +103,11 @@ bool init_game(void) {
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
     SDL_SetRenderDrawColor(renderer, 0xED, 0xC9, 0xAF, 0xFF);
 
+    // add the icon
+    SDL_Surface* iconSurf = IMG_Load("Resources/IconImageHandsome2.png");
+    SDL_SetWindowIcon(window, iconSurf);
+    SDL_FreeSurface(iconSurf);
+
     return true;
 }
 
